@@ -91,7 +91,7 @@ Global $pdftosend;
             send_telegram_message($chat_id, 'Ivan Deus bot welcomes you! Type /guide or /help for all available commands',$bot_token);
         } elseif (strpos($message_text, '/help') !== false) {
             // Handle the /help command
-            send_telegram_message($chat_id, 'This is a help message. Try /start of  /guide',$bot_token);
+            send_telegram_message($chat_id, 'This is a help message. Try /start or /guide',$bot_token);
         } elseif (strpos($message_text, '/guide') !== false) {
             // Handle the /guide command to send a PDF file
             send_file($chat_id, 'telebot-h-files/'.$pdftosend, 'application/pdf', $pdftosend,$bot_token);
