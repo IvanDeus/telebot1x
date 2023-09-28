@@ -166,6 +166,7 @@ def hello():
     return 'Hello, World!'
 
 # Main logic
+
 @app.route('/telebot-hook1x', methods=['POST'])
 def telebothook1x():
     try:
@@ -175,7 +176,7 @@ def telebothook1x():
         # Read post input
         update_data = request.get_json()
         # Debug: Print the received update_data
-        #print("Received update_data:", update_data)
+        # print("Received update_data:", update_data)
         if update_data:
             if 'message' in update_data:
                 message_data = update_data['message']
@@ -189,41 +190,38 @@ def telebothook1x():
                 name = chat_info.get('username', '')
                 chat_id = chat_info.get('id', 0)
                 message = message_data.get('text', '')
-            # Extract relevant information from the update_data
-            #name = update_data['message']['chat']['username']
-            #chat_id = update_data['message']['chat']['id']
-            #message = update_data['message']['text']
-            # Call your add_or_update_user function to add/update the user in the database
-            add_or_update_user(chat_id, name, message, conn)
 
-            # MySQL add or update user
-            last_24_users = get_last_24_users(conn)
+                # Call your add_or_update_user function to add/update the user in the database
+                add_or_update_user(chat_id, name, message, conn)
 
-            message_lastu = ''
-            if '/stat24' in message and name == admin_name:
-                # Loop through the last_24_users list of tuples
-                for user_data in last_24_users:
-                    # Access each element in the tuple by index
-                    id = user_data[0]
-                    chat_id2 = user_data[1]
-                    name = user_data[2]
-                    lastupd = user_data[3]
-                    lastmsg = user_data[4]
+                # MySQL add or update user
+                last_24_users = get_last_24_users(conn)
 
-                    # Work with each variable as needed
-                    message_lastu += f"ID: {id}\n"
-                    message_lastu += f"Chat ID: {chat_id2}\n"
-                    message_lastu += f"Name: {name}\n"
-                    message_lastu += f"Last Update: {lastupd}\n"
-                    message_lastu += f"Last Message: {lastmsg}\n"
-                    message_lastu += "\n"
+                message_lastu = ''
+                if '/stat24' in message and name == admin_name:
+                    # Loop through the last_24_users list of tuples
+                    for user_data in last_24_users:
+                        # Access each element in the tuple by index
+                        id = user_data[0]
+                        chat_id2 = user_data[1]
+                        name = user_data[2]
+                        lastupd = user_data[3]
+                        lastmsg = user_data[4]
 
-                # Send the message to the Telegram bot
-                send_telegram_message(chat_id, message_lastu, bot_token)
-            else:
-                handle_telegram_update(update_data, bot_token)
-            # Return a JSON response
-            return jsonify(message=message_lastu)
+                        # Work with each variable as needed
+                        message_lastu += f"ID: {id}\n"
+                        message_lastu += f"Chat ID: {chat_id2}\n"
+                        message_lastu += f"Name: {name}\n"
+                        message_lastu += f"Last Update: {lastupd}\n"
+                        message_lastu += f"Last Message: {lastmsg}\n"
+                        message_lastu += "\n"
+
+                    # Send the message to the Telegram bot
+                    send_telegram_message(chat_id, message_lastu, bot_token)
+                else:
+                    handle_telegram_update(update_data, bot_token)
+                # Return a JSON response
+                return jsonify(message=message_lastu)
 
     except pymysql.Error as e:
         print(f"Database error: {e}")
@@ -233,6 +231,10 @@ def telebothook1x():
         # Close the database connection
         if conn:
             conn.close()
+
+    # If there's no message to handle, return an empty response
+    return '', 204  # HTTP 204 No Content
+
 
 if __name__ == '__main__':
     # Change the host and port here
