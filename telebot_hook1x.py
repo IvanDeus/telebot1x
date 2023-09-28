@@ -177,9 +177,10 @@ def telebothook1x():
 
         if update_data:
             # Extract relevant information from the update_data
-            name = update_data['message']['chat']['username']
-            chat_id = update_data['message']['chat']['id']
-            message = update_data['message']['text']
+            chat_info = update_data['message'].get('chat', {})
+            name = chat_info.get('username', '')
+            chat_id = chat_info.get('id', 0)
+            message = update_data['message'].get('text', '')
 
             # Call your add_or_update_user function to add/update the user in the database
             add_or_update_user(chat_id, name, message, conn)
