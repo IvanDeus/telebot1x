@@ -1,7 +1,7 @@
-# telebot1x made by IvanDeus (2023)
+# telebot1x (python version) made by IvanDeus (2023)
 This is a straightforward Telegram bot built on PHP/MySQL. 
 It actively awaits user input, responds to a number of commands and efficiently stores every user chat in a MySQL table. 
-The minimum system requirements for this bot are as follows: PHP version 5.3.10, MySQL version 5.5.54, and Apache2.
+The minimum system requirements for this bot are as follows: Python 3.10.12, MySQL version 5.5.54, and Flask.
 
 Installation Steps:
 
