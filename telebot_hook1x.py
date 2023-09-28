@@ -174,14 +174,25 @@ def telebothook1x():
 
         # Read post input
         update_data = request.get_json()
-
+        # Debug: Print the received update_data
+        #print("Received update_data:", update_data)
         if update_data:
+            if 'message' in update_data:
+                message_data = update_data['message']
+            elif 'edited_message' in update_data:
+                message_data = update_data['edited_message']
+            else:
+                message_data = None
+                message = 'None'
+            if message_data:
+                chat_info = message_data.get('chat', {})
+                name = chat_info.get('username', '')
+                chat_id = chat_info.get('id', 0)
+                message = message_data.get('text', '')
             # Extract relevant information from the update_data
-            chat_info = update_data['message'].get('chat', {})
-            name = chat_info.get('username', '')
-            chat_id = chat_info.get('id', 0)
-            message = update_data['message'].get('text', '')
-
+            #name = update_data['message']['chat']['username']
+            #chat_id = update_data['message']['chat']['id']
+            #message = update_data['message']['text']
             # Call your add_or_update_user function to add/update the user in the database
             add_or_update_user(chat_id, name, message, conn)
 
