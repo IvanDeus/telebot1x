@@ -1,4 +1,6 @@
 # telebot1x (php version) made by IvanDeus (2023)
+If you find yourself needing to send text information, images, or PDF files via Telegram to a user, then this bot is the ideal solution for you.
+
 This is a straightforward Telegram bot built on PHP/MySQL. 
 It actively awaits user input, responds to a number of commands and efficiently stores every user chat in a MySQL table. 
 The minimum system requirements for this bot are as follows: PHP version 5.3.10, MySQL version 5.5.54, and Apache2.
