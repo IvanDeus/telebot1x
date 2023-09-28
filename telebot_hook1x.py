@@ -8,7 +8,7 @@ app = Flask(__name__)
 # Config import
 from telebot_hook1x_cfg import bot_token, admin_name, db_host, db_username, db_password, db_name, mysql_unix_socket, imgtosend, pdftosend
 
-# ... rest of your code ...
+# ... Code begins
 
 # Function to add or update a user in the 'telebot_users' table
 def add_or_update_user(chat_id, name, message, conn):
