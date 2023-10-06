@@ -152,9 +152,7 @@ def send_telegram_message(chat_id, message, bot_token):
         if response.status_code != 200:
             # Handle the error
             print(f"Telegram API error: {response.status_code} - {response.text}")
-        else:
-            # Message sent successfully
-            print("Message sent successfully")
+
 
     except Exception as e:
         # Handle any exceptions
