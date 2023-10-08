@@ -55,6 +55,30 @@ def get_last_24_users(conn):
 
     return users
 
+# Function to handle the '/stat24' command
+def handle_stat24_command(chat_id, name, last_24_users, bot_token):
+    message_lastu = ''
+    if '/stat24' in message and name == admin_name:
+        # Loop through the last_24_users list of tuples
+        for user_data in last_24_users:
+            # Access each element in the tuple by index
+            id = user_data[0]
+            chat_id2 = user_data[1]
+            name = user_data[2]
+            lastupd = user_data[3]
+            lastmsg = user_data[4]
+
+            # Work with each variable as needed
+            message_lastu += f"ID: {id}\n"
+            message_lastu += f"Chat ID: {chat_id2}\n"
+            message_lastu += f"Name: {name}\n"
+            message_lastu += f"Last Update: {lastupd}\n"
+            message_lastu += f"Last Message: {lastmsg}\n"
+            message_lastu += "\n"
+
+        # Send the message to the Telegram bot
+        send_telegram_message(chat_id, message_lastu, bot_token)
+
 # Function to handle incoming Telegram updates
 def handle_telegram_update(update_data, bot_token):
     # Define global variables
@@ -157,8 +181,8 @@ def send_telegram_message(chat_id, message, bot_token):
 def hello():
     return 'Hello, World!'
 
-# Main logic
 
+# Main logic
 @app.route('/telebot-hook1x', methods=['POST'])
 def telebothook1x():
     try:
@@ -177,36 +201,16 @@ def telebothook1x():
             name = update_data['message']['chat']['username']
             chat_id = update_data['message']['chat']['id']
 
-                # Call your add_or_update_user function to add/update the user in the database
+            # Call your add_or_update_user function to add/update the user in the database
             add_or_update_user(chat_id, name, message, conn)
 
-                # MySQL add or update user
+            # MySQL add or update user
             last_24_users = get_last_24_users(conn)
 
-            message_lastu = ''
-            if '/stat24' in message and name == admin_name:
-                 # Loop through the last_24_users list of tuples
-                for user_data in last_24_users:
-                   # Access each element in the tuple by index
-                    id = user_data[0]
-                    chat_id2 = user_data[1]
-                    name = user_data[2]
-                    lastupd = user_data[3]
-                    lastmsg = user_data[4]
+            # Call the function to handle the '/stat24' command
+            handle_stat24_command(chat_id, name, last_24_users, bot_token)
 
-                        # Work with each variable as needed
-                    message_lastu += f"ID: {id}\n"
-                    message_lastu += f"Chat ID: {chat_id2}\n"
-                    message_lastu += f"Name: {name}\n"
-                    message_lastu += f"Last Update: {lastupd}\n"
-                    message_lastu += f"Last Message: {lastmsg}\n"
-                    message_lastu += "\n"
-
-                    # Send the message to the Telegram bot
-                    send_telegram_message(chat_id, message_lastu, bot_token)
-            else:
-                handle_telegram_update(update_data, bot_token)
-                # Return a JSON response
+            # Return a JSON response
             return jsonify(message=message_lastu)
 
     except pymysql.Error as e:
@@ -220,7 +224,6 @@ def telebothook1x():
 
     # If there's no message to handle, return an empty response
     return '', 204  # HTTP 204 No Content
-
 
 if __name__ == '__main__':
     # Change the host and port here
