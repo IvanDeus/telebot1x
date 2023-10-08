@@ -100,9 +100,6 @@ def send_image(chat_id, file_path, file_type, file_name, bot_token):
         if response.status_code != 200:
             # Handle the error
             print(f"Telegram API error: {response.status_code} - {response.text}")
-        else:
-            # Image sent successfully
-            print("Image sent successfully")
 
     except Exception as e:
         # Handle any exceptions
@@ -126,9 +123,6 @@ def send_file(chat_id, file_path, file_type, file_name, bot_token):
         if response.status_code != 200:
             # Handle the error
             print(f"Telegram API error: {response.status_code} - {response.text}")
-        else:
-            # File sent successfully
-            print("File sent successfully")
 
     except Exception as e:
         # Handle any exceptions
