@@ -56,7 +56,7 @@ def get_last_24_users(conn):
     return users
 
 # Function to handle the '/stat24' command
-def handle_stat24_command(chat_id, name, last_24_users, bot_token):
+def handle_stat24_command(chat_id, name, message, last_24_users, bot_token):
     message_lastu = ''
     if '/stat24' in message and name == admin_name:
         # Loop through the last_24_users list of tuples
@@ -208,7 +208,7 @@ def telebothook1x():
             last_24_users = get_last_24_users(conn)
 
             # Call the function to handle the '/stat24' command
-            handle_stat24_command(chat_id, name, last_24_users, bot_token)
+            handle_stat24_command(chat_id, name, message, last_24_users, bot_token)
 
             # Return a JSON response
             return jsonify(message=message_lastu)
