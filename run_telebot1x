@@ -1,0 +1,1 @@
+gunicorn -b localhost:1500 -w 3 -t 122 --log-file=telebot1.log telebot_hook1x:app &
