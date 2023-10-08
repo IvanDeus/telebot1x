@@ -76,7 +76,8 @@ def handle_stat24_command(chat_id, name, message, bot_token, conn):
             message_lastu += f"Last Update: {lastupd}\n"
             message_lastu += f"Last Message: {lastmsg}\n"
             message_lastu += "\n"
-        return message_lastu   
+        # Send the message to the Telegram bot
+        send_telegram_message(chat_id, message_lastu, bot_token)
 
 # Function to handle incoming Telegram updates
 def handle_telegram_update(update_data, bot_token):
@@ -204,12 +205,11 @@ def telebothook1x():
             add_or_update_user(chat_id, name, message, conn)
 
             # Call the function to handle the '/stat24' command
-            message_lastu = handle_stat24_command(chat_id, name, message, bot_token, conn)
-            if message_lastu:
-                message = message_lastu
-            
-            # Send the message to the Telegram bot
-            send_telegram_message(chat_id, message, bot_token)
+            handle_stat24_command(chat_id, name, message, bot_token, conn)
+
+            handle_telegram_update(update_data, bot_token)
+            # Return a JSON response
+            return jsonify(message)
 
     except pymysql.Error as e:
         print(f"Database error: {e}")
