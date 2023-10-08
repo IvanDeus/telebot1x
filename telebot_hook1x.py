@@ -86,28 +86,38 @@ def handle_telegram_update(update_data, bot_token, conn):
     global admin_name
     
     if 'message' in update_data:
-        chat_id = update_data['message']['chat']['id']
-        name = update_data['message']['chat']['username']
-        message_text = update_data['message']['text']
+        message_data = update_data['message']
+        chat_id = message_data['chat']['id']
+        name = message_data['chat']['username']
 
-        # Check the message text for specific commands or keywords
-        if '/start' in message_text:
-            # Send the image right after the welcome message
-            send_image(chat_id, 'telebot-h-files/' + imgtosend, 'image/jpeg', imgtosend, bot_token)
+        if 'text' in message_data:
+            message_text = message_data['text']
 
-            # Handle the /start command
-            send_telegram_message(chat_id, 'Ivan Deus bot welcomes you! Type /guide or /help for all available commands', bot_token)
-        elif '/help' in message_text:
-            # Handle the /help command
-            send_telegram_message(chat_id, 'This is a help message. Try /start or /guide', bot_token)
-        elif '/guide' in message_text:
-            # Handle the /guide command to send a PDF file
-            send_file(chat_id, 'telebot-h-files/' + pdftosend, 'application/pdf', pdftosend, bot_token)
-        elif '/stat24' in message_text and name == admin_name:
-            handle_stat24_command(chat_id, bot_token, conn)
+            # Check the message text for specific commands or keywords
+            if '/start' in message_text:
+                # Send the image right after the welcome message
+                send_image(chat_id, 'telebot-h-files/' + imgtosend, 'image/jpeg', imgtosend, bot_token)
+
+                # Handle the /start command
+                send_telegram_message(chat_id, 'Ivan Deus bot welcomes you! Type /guide or /help for all available commands', bot_token)
+            elif '/help' in message_text:
+                # Handle the /help command
+                send_telegram_message(chat_id, 'This is a help message. Try /start or /guide', bot_token)
+            elif '/guide' in message_text:
+                # Handle the /guide command to send a PDF file
+                send_file(chat_id, 'telebot-h-files/' + pdftosend, 'application/pdf', pdftosend, bot_token)
+            elif '/stat24' in message_text and name == admin_name:
+                handle_stat24_command(chat_id, bot_token, conn)
+            else:
+                # Handle other user input as needed
+                send_telegram_message(chat_id, "I do not understand. Type /help for assistance.", bot_token)
         else:
-            # Handle other user input as needed
-            send_telegram_message(chat_id, "I do not understand. Type /help for assistance.", bot_token)
+            # Handle non-text messages (e.g., stickers)
+            print(f"Received a non-text message from {name} (Chat ID: {chat_id})")
+
+    elif 'edited_message' in update_data:
+        # Handle edited messages if needed
+        pass
 
 # Function to send an image to the Telegram bot
 def send_image(chat_id, file_path, file_type, file_name, bot_token):
@@ -195,20 +205,25 @@ def telebothook1x():
         update_data = request.get_json()
         # Debug: Print the received update_data
         # print("Received update_data:", update_data)
-        if update_data:
-            if 'edited_message' in update_data:
-                message = update_data['edited_message']
+        if 'message' in update_data:
+            if 'text' in update_data['message']:
+               message = update_data['message']['text']
             else:
-                message = update_data['message']['text']
-            name = update_data['message']['chat']['username']
-            chat_id = update_data['message']['chat']['id']
+               message = " "
+        elif 'edited_message'  in update_data:
+            message = update_data['edited_message']
+        else:
+            message = " "
 
-            # Call your add_or_update_user function to add/update the user in the database
-            add_or_update_user(chat_id, name, message, conn)
-            # Respond to a user  
-            handle_telegram_update(update_data, bot_token, conn)
-            # Return a JSON response
-            return jsonify(message)
+        name = update_data['message']['chat']['username']
+        chat_id = update_data['message']['chat']['id']
+
+        # Call your add_or_update_user function to add/update the user in the database
+        add_or_update_user(chat_id, name, message, conn)
+
+        handle_telegram_update(update_data, bot_token, conn)
+        # Return a JSON response
+        return jsonify(message)
 
     except pymysql.Error as e:
         print(f"Database error: {e}")
