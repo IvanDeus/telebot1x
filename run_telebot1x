@@ -9,8 +9,8 @@ if [ "$1" == "start" ]; then
   gunicorn -b localhost:1500 -w 3 -t 122 --log-file=telebot1.log telebot_hook1x:app &
   echo "Gunicorn started."
 elif [ "$1" == "stop" ]; then
-  # Get the PID of the Gunicorn process and kill it
-  gunicorn_pid=$(ps -e | grep gunicorn | awk '{print $1}')
+  # Get the first PID of the Gunicorn process and kill it
+  gunicorn_pid=$(ps -e | grep gunicorn | awk 'NR==1 {print $1}')
   if [ -n "$gunicorn_pid" ]; then
     kill "$gunicorn_pid"
     echo "Gunicorn stopped."
@@ -24,4 +24,3 @@ else
   echo "Usage: $0 [start|stop|status]"
   exit 1
 fi
-
