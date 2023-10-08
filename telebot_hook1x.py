@@ -204,7 +204,7 @@ def telebothook1x():
             add_or_update_user(chat_id, name, message, conn)
 
             # Call the function to handle the '/stat24' command
-            if message_lastu = handle_stat24_command(chat_id, name, message, bot_token, conn):
+            if message_lastu == handle_stat24_command(chat_id, name, message, bot_token, conn):
                 message = message_lastu
             
             # Send the message to the Telegram bot
