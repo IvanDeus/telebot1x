@@ -206,7 +206,7 @@ def telebothook1x():
             add_or_update_user(chat_id, name, message, conn)
 
             # Call the function to handle the '/stat24' command
-            handle_stat24_command(chat_id, name, message, last_24_users, bot_token)
+            handle_stat24_command(chat_id, name, message, bot_token, conn)
 
     except pymysql.Error as e:
         print(f"Database error: {e}")
