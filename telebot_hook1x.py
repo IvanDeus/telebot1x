@@ -59,8 +59,8 @@ def get_last_24_users(conn):
 def handle_stat24_command(chat_id, bot_token, conn):
     message_lastu = ''
     last_24_users = get_last_24_users(conn)
-        # Loop through the last_24_users list of tuples
-        for user_data in last_24_users:
+    # Loop through the last_24_users list of tuples
+    for user_data in last_24_users:
             # Access each element in the tuple by index
             id = user_data[0]
             chat_id2 = user_data[1]
@@ -75,7 +75,7 @@ def handle_stat24_command(chat_id, bot_token, conn):
             message_lastu += f"Last Update: {lastupd}\n"
             message_lastu += f"Last Message: {lastmsg}\n"
             message_lastu += "\n"
-        # Send the message to the Telegram bot
+      # Send the message to the Telegram bot
     send_telegram_message(chat_id, message_lastu, bot_token)
     return true
 
