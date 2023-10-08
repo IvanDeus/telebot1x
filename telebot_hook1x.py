@@ -80,7 +80,7 @@ def handle_stat24_command(chat_id, bot_token, conn):
     return true
 
 # Function to handle incoming Telegram updates
-def handle_telegram_update(update_data, bot_token):
+def handle_telegram_update(update_data, bot_token, conn):
     # Define global variables
     global imgtosend
     global pdftosend
@@ -88,7 +88,7 @@ def handle_telegram_update(update_data, bot_token):
     
     if 'message' in update_data:
         chat_id = update_data['message']['chat']['id']
-        name = update_data['message']['chat']['name']
+        name = update_data['message']['chat']['username']
         message_text = update_data['message']['text']
 
         # Check the message text for specific commands or keywords
