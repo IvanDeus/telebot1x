@@ -56,10 +56,9 @@ def get_last_24_users(conn):
     return users
 
 # Function to handle the '/stat24' command
-def handle_stat24_command(chat_id, name, message, bot_token, conn):
+def handle_stat24_command(chat_id, bot_token, conn):
     message_lastu = ''
     last_24_users = get_last_24_users(conn)
-    if '/stat24' in message and name == admin_name:
         # Loop through the last_24_users list of tuples
         for user_data in last_24_users:
             # Access each element in the tuple by index
@@ -77,17 +76,19 @@ def handle_stat24_command(chat_id, name, message, bot_token, conn):
             message_lastu += f"Last Message: {lastmsg}\n"
             message_lastu += "\n"
         # Send the message to the Telegram bot
-        send_telegram_message(chat_id, message_lastu, bot_token)
-        return true
+    send_telegram_message(chat_id, message_lastu, bot_token)
+    return true
 
 # Function to handle incoming Telegram updates
 def handle_telegram_update(update_data, bot_token):
     # Define global variables
     global imgtosend
     global pdftosend
-
+    global admin_name
+    
     if 'message' in update_data:
         chat_id = update_data['message']['chat']['id']
+        name = update_data['message']['chat']['name']
         message_text = update_data['message']['text']
 
         # Check the message text for specific commands or keywords
@@ -103,6 +104,8 @@ def handle_telegram_update(update_data, bot_token):
         elif '/guide' in message_text:
             # Handle the /guide command to send a PDF file
             send_file(chat_id, 'telebot-h-files/' + pdftosend, 'application/pdf', pdftosend, bot_token)
+        elif '/stat24' in message and name == admin_name:
+            handle_stat24_command(chat_id, bot_token, conn)
         else:
             # Handle other user input as needed
             send_telegram_message(chat_id, "I do not understand. Type /help for assistance.", bot_token)
@@ -205,10 +208,7 @@ def telebothook1x():
             # Call your add_or_update_user function to add/update the user in the database
             add_or_update_user(chat_id, name, message, conn)
 
-            # Call the function to handle the '/stat24' command
-            handle_stat24_command(chat_id, name, message, bot_token, conn)
-
-            handle_telegram_update(update_data, bot_token)
+            handle_telegram_update(update_data, bot_token, conn)
             # Return a JSON response
             return jsonify(message)
 
