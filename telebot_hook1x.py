@@ -78,6 +78,7 @@ def handle_stat24_command(chat_id, name, message, bot_token, conn):
             message_lastu += "\n"
         # Send the message to the Telegram bot
         send_telegram_message(chat_id, message_lastu, bot_token)
+        return true
 
 # Function to handle incoming Telegram updates
 def handle_telegram_update(update_data, bot_token):
