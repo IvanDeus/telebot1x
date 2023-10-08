@@ -182,8 +182,7 @@ def send_telegram_message(chat_id, message, bot_token):
 # Telegram bot
 @app.route('/')
 def hello():
-    return 'Hello, World!'
-
+    return render_template('hello.html')
 
 # Main logic
 @app.route('/telebot-hook1x', methods=['POST'])
