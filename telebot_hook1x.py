@@ -56,8 +56,9 @@ def get_last_24_users(conn):
     return users
 
 # Function to handle the '/stat24' command
-def handle_stat24_command(chat_id, name, message, last_24_users, bot_token):
+def handle_stat24_command(chat_id, name, message, bot_token, conn):
     message_lastu = ''
+    last_24_users = get_last_24_users(conn)
     if '/stat24' in message and name == admin_name:
         # Loop through the last_24_users list of tuples
         for user_data in last_24_users:
@@ -75,7 +76,7 @@ def handle_stat24_command(chat_id, name, message, last_24_users, bot_token):
             message_lastu += f"Last Update: {lastupd}\n"
             message_lastu += f"Last Message: {lastmsg}\n"
             message_lastu += "\n"
-
+        
         # Send the message to the Telegram bot
         send_telegram_message(chat_id, message_lastu, bot_token)
 
@@ -204,14 +205,8 @@ def telebothook1x():
             # Call your add_or_update_user function to add/update the user in the database
             add_or_update_user(chat_id, name, message, conn)
 
-            # MySQL add or update user
-            last_24_users = get_last_24_users(conn)
-
             # Call the function to handle the '/stat24' command
             handle_stat24_command(chat_id, name, message, last_24_users, bot_token)
-
-            # Return a JSON response
-            return jsonify(message=message_lastu)
 
     except pymysql.Error as e:
         print(f"Database error: {e}")
