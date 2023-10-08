@@ -104,7 +104,7 @@ def handle_telegram_update(update_data, bot_token, conn):
         elif '/guide' in message_text:
             # Handle the /guide command to send a PDF file
             send_file(chat_id, 'telebot-h-files/' + pdftosend, 'application/pdf', pdftosend, bot_token)
-        elif '/stat24' in message and name == admin_name:
+        elif '/stat24' in message_text and name == admin_name:
             handle_stat24_command(chat_id, bot_token, conn)
         else:
             # Handle other user input as needed
