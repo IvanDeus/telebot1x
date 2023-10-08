@@ -206,7 +206,7 @@ def telebothook1x():
 
             # Call your add_or_update_user function to add/update the user in the database
             add_or_update_user(chat_id, name, message, conn)
-
+            # Respond to a user  
             handle_telegram_update(update_data, bot_token, conn)
             # Return a JSON response
             return jsonify(message)
