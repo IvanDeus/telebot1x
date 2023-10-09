@@ -8,7 +8,10 @@ CREATE TABLE telebot_users (
     chat_id VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
     lastupd TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    lastmsg TEXT );
+    lastmsg TEXT,
+    Sub tinyint(1) NOT NULL DEFAULT '0',
+    first_name VARCHAR(255),
+    last_name VARCHAR(255));
 
 '''
 
