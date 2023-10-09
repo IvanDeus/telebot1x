@@ -2,7 +2,9 @@
 If you find yourself needing to send text information, images, or PDF files via Telegram to a user, then this bot is the ideal solution for you.
 
 This is a straightforward Telegram bot built on Python/MySQL. 
-It actively awaits user input, responds to a number of commands and efficiently stores every user chat in a MySQL table. 
+It actively awaits user input, responds to a number of commands below and efficiently stores every user chatID in a MySQL table.
+Bot admin can send to subscribed users a message using /forward command.
+
 The minimum system requirements for this bot are as follows: Python 3.10.12, MySQL version 5.5.54, and Flask.
 
 Installation Steps:
@@ -14,4 +16,4 @@ Installation Steps:
 5. Establish a webhook, ensuring it uses HTTPS, and point it to the following URL: https://your-server/telebot-hook1x. All information regarding webhooks can be found here: https://core.telegram.org/bots/webhooks
 6. You are now ready to start chatting with your bot.
 
-You can interact with the bot using the following available commands: /start, /help, /guide, and /stat24 (exclusive to admin users).
+You can interact with the bot using the following available commands: /start, /help, /guide, /sub, /unsub and /stat24 (exclusive to admin users).
