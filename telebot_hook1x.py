@@ -3,6 +3,7 @@ import json
 import requests
 import pymysql
 from datetime import datetime
+import time
 
 app = Flask(__name__)
 # Config import
@@ -11,13 +12,15 @@ from telebot_hook1x_cfg import bot_token, admin_name, db_host, db_username, db_p
 # ... Code begins
 
 # Function to add or update a user in the 'telebot_users' table
-def add_or_update_user(chat_id, name, message, conn):
+def add_or_update_user(chat_id, name, message, conn, first_name, last_name):
     try:
         with conn.cursor() as cursor:
             # Convert chat_id to a string and then escape it to prevent SQL injection
             chat_id_str = conn.escape_string(str(chat_id))
             name = conn.escape_string(name)
             message = conn.escape_string(message)
+            first_name = conn.escape_string(first_name)
+            last_name = conn.escape_string(last_name)
 
             # Check if the user already exists in the table
             query = f"SELECT * FROM telebot_users WHERE chat_id = '{chat_id_str}'"
@@ -31,7 +34,7 @@ def add_or_update_user(chat_id, name, message, conn):
             else:
                 # User does not exist, insert a new record
                 current_time = conn.escape_string(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-                insert_query = f"INSERT INTO telebot_users (chat_id, name, lastupd, lastmsg) VALUES ('{chat_id_str}', '{name}', '{current_time}', '{message}')"
+                insert_query = f"INSERT INTO telebot_users (chat_id, name, lastupd, lastmsg, first_name, last_name) VALUES ('{chat_id_str}', '{name}', '{current_time}', '{message}', '{first_name}', '{last_name}')"
                 cursor.execute(insert_query)
 
             # Commit the changes to the database
@@ -54,6 +57,19 @@ def get_last_24_users(conn):
         users = cursor.fetchall()
 
     return users
+
+def change_sub_status(chat_id, conn, sub):
+    try:
+        with conn.cursor() as cursor:
+            # Use parameterized query to update the subscription status
+            query = "UPDATE telebot_users SET Sub = %s WHERE chat_id = %s"
+            cursor.execute(query, (sub, chat_id))
+            # Commit the changes to the database
+            conn.commit()
+
+    except pymysql.Error as e:
+        # Handle any database errors here
+        print(f"Database error: {e}")
 
 # Function to handle the '/stat24' command
 def handle_stat24_command(chat_id, bot_token, conn):
@@ -78,13 +94,31 @@ def handle_stat24_command(chat_id, bot_token, conn):
       # Send the message to the Telegram bot
     send_telegram_message(chat_id, message_lastu, bot_token)
 
+
+# Function to find all subscribed chat IDs
+def find_subbed_chatids(conn):
+    try:
+        with conn.cursor() as cursor:
+            query = "SELECT chat_id FROM telebot_users WHERE Sub = 1"
+            cursor.execute(query)
+            results = cursor.fetchall()  # Fetch all matching chat IDs
+            if results:
+                return [result[0] for result in results]  # Return a list of chat IDs
+            else:
+                return []  # Return an empty list if no subscribed users found
+    except Exception as e:
+        # Handle any exceptions (e.g., database connection error)
+        print(f"Error: {e}")
+        return []
+
+
 # Function to handle incoming Telegram updates
 def handle_telegram_update(update_data, bot_token, conn):
     # Define global variables
     global imgtosend
     global pdftosend
     global admin_name
-    
+
     if 'message' in update_data:
         message_data = update_data['message']
         chat_id = message_data['chat']['id']
@@ -100,9 +134,27 @@ def handle_telegram_update(update_data, bot_token, conn):
 
                 # Handle the /start command
                 send_telegram_message(chat_id, 'Ivan Deus bot welcomes you! Type /guide or /help for all available commands', bot_token)
+
+            elif '/sub' in message_text:
+                 sub = 1
+                 change_sub_status(chat_id, conn, sub)
+                 send_telegram_message(chat_id, "You have subscribed", bot_token)
+            elif '/unsub' in message_text:
+                 sub = 0
+                 change_sub_status(chat_id, conn, sub)
+                 send_telegram_message(chat_id, "You unsubscribed", bot_token)
+            elif '/forward' in message_text:
+                 # Find all subscribed chat IDs
+                 subscribed_chat_ids = find_subbed_chatids(conn)
+                 message_text = message_text[len('/forward '):] #cut command forward
+                 # Loop through the subscribed chat IDs and send the message
+                 for chat_id in subscribed_chat_ids:
+                     send_telegram_message(chat_id, message_text, bot_token)
+                     time.sleep(1)  # Add a delay
+
             elif '/help' in message_text:
                 # Handle the /help command
-                send_telegram_message(chat_id, 'This is a help message. Try /start or /guide', bot_token)
+                send_telegram_message(chat_id, 'This is a help message. Try /start or /guide. You can subscribe with /sub and undo with /unsub', bot_token)
             elif '/guide' in message_text:
                 # Handle the /guide command to send a PDF file
                 send_file(chat_id, 'telebot-h-files/' + pdftosend, 'application/pdf', pdftosend, bot_token)
@@ -113,7 +165,7 @@ def handle_telegram_update(update_data, bot_token, conn):
                 send_telegram_message(chat_id, "I do not understand. Type /help for assistance.", bot_token)
         else:
             # Handle non-text messages (e.g., stickers)
-            print(f"Received a non-text message from {name} (Chat ID: {chat_id})")
+            print(f"Received a non-text message")
 
     elif 'edited_message' in update_data:
         # Handle edited messages if needed
@@ -194,6 +246,7 @@ def send_telegram_message(chat_id, message, bot_token):
 def hello():
     return render_template('hello.html')
 
+
 # Main logic
 @app.route('/telebot-hook1x', methods=['POST'])
 def telebothook1x():
@@ -204,7 +257,7 @@ def telebothook1x():
         # Read post input
         update_data = request.get_json()
         # Debug: Print the received update_data
-        # print("Received update_data:", update_data)
+        ##print("Received update_data:", update_data)
         if 'message' in update_data:
             if 'text' in update_data['message']:
                message = update_data['message']['text']
@@ -218,8 +271,15 @@ def telebothook1x():
         name = update_data['message']['chat']['username']
         chat_id = update_data['message']['chat']['id']
 
+
+        first_name = update_data['message']['chat']['first_name']
+        if 'last_name' in update_data['message']['chat']:
+            last_name = update_data['message']['chat']['last_name']
+        else:
+            last_name = " "
+
         # Call your add_or_update_user function to add/update the user in the database
-        add_or_update_user(chat_id, name, message, conn)
+        add_or_update_user(chat_id, name, message, conn, first_name, last_name)
 
         handle_telegram_update(update_data, bot_token, conn)
         # Return a JSON response
@@ -240,4 +300,3 @@ def telebothook1x():
 if __name__ == '__main__':
     # Change the host and port here
     app.run(port=1500)
-
