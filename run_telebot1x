@@ -1,5 +1,5 @@
 #!/bin/bash
-
+## cd /pathtobot
 if [ $# -eq 0 ]; then
   echo "Usage: $0 [start|stop|status]"
   exit 1
