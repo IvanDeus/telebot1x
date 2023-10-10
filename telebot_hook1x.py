@@ -97,7 +97,7 @@ def handle_stat24_command(chat_id, bot_token, conn):
             message_lastu += f"Last Message: {lastmsg}\n"
             message_lastu += "\n"
       # Send the message to the Telegram bot
-    send_telegram_message(chat_id, message_lastu, bot_token)
+    bot.send_message(chat_id, message_lastu)
 
 
 # Function to find all subscribed chat IDs
@@ -139,28 +139,28 @@ def handle_telegram_update(update_data, bot_token, conn):
                 with open('telebot-h-files/' + imgtosend, 'rb') as photo:
                     bot.send_photo(chat_id, photo)
                 # Handle the /start command
-                send_telegram_message(chat_id, 'Ivan Deus bot welcomes you! Type /guide or /help for all available commands', bot_token)
+                bot.send_message(chat_id, 'Ivan Deus bot welcomes you! Type /guide or /help for all available commands')
 
             elif '/sub' in message_text:
                  sub = 1
                  change_sub_status(chat_id, conn, sub)
-                 send_telegram_message(chat_id, "You have subscribed", bot_token)
+                 bot.send_message(chat_id, "You have subscribed")
             elif '/unsub' in message_text:
                  sub = 0
                  change_sub_status(chat_id, conn, sub)
-                 send_telegram_message(chat_id, "You unsubscribed", bot_token)
+                 bot.send_message(chat_id, "You unsubscribed")
             elif '/forward' in message_text:
                  # Find all subscribed chat IDs
                  subscribed_chat_ids = find_subbed_chatids(conn)
                  message_text = message_text[len('/forward '):] #cut command forward
                  # Loop through the subscribed chat IDs and send the message
                  for chat_id in subscribed_chat_ids:
-                     send_telegram_message(chat_id, message_text, bot_token)
+                     bot.send_message(chat_id, message_text)
                      time.sleep(1)  # Add a delay
 
             elif '/help' in message_text:
                 # Handle the /help command
-                send_telegram_message(chat_id, 'This is a help message. Try /start or /guide. You can subscribe with /sub and undo with /unsub', bot_token)
+                bot.send_message(chat_id, 'This is a help message. Try /start or /guide. You can subscribe with /sub and undo with /unsub')
             elif '/guide' in message_text:
                 # Handle the /guide command to send a PDF file
                 with open('telebot-h-files/' + pdftosend, 'rb') as pdf_file:
@@ -170,7 +170,7 @@ def handle_telegram_update(update_data, bot_token, conn):
                 handle_stat24_command(chat_id, bot_token, conn)
             else:
                 # Handle other user input as needed
-                send_telegram_message(chat_id, "I do not understand. Type /help for assistance.", bot_token)
+                bot.send_message(chat_id, "I do not understand. Type /help for assistance.")
         else:
             # Handle non-text messages (e.g., stickers)
             print(f"Received a non-text message")
@@ -178,31 +178,6 @@ def handle_telegram_update(update_data, bot_token, conn):
     elif 'edited_message' in update_data:
         # Handle edited messages if needed
         pass
-
-
-# Function to send a message to the Telegram bot
-def send_telegram_message(chat_id, message, bot_token):
-    try:
-        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-        data = {
-            'chat_id': chat_id,
-            'text': message,
-        }
-
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.post(url, json=data, headers=headers)
-
-        if response.status_code != 200:
-            # Handle the error
-            print(f"Telegram API error: {response.status_code} - {response.text}")
-
-
-    except Exception as e:
-        # Handle any exceptions
-        print(f"Error sending Telegram message: {e}")
 
 # Telegram bot
 @app.route('/')
