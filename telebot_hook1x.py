@@ -1,15 +1,15 @@
-from flask import Flask, request, jsonify, render_template
-import json
-import requests
+# Telebot1x v2...
+import telebot
+from telebot import types
 import pymysql
 from datetime import datetime
 import time
 
-app = Flask(__name__)
 # Config import
 from telebot_hook1x_cfg import bot_token, admin_name, db_host, db_username, db_password, db_name, mysql_unix_socket, imgtosend, pdftosend
 
-# ... Code begins
+# Initialize the bot
+bot = telebot.TeleBot(bot_token)
 
 # Function to add or update a user in the 'telebot_users' table
 def add_or_update_user(chat_id, name, message, conn, first_name, last_name):
@@ -61,7 +61,7 @@ def get_last_24_users(conn):
 def change_sub_status(chat_id, conn, sub):
     try:
         with conn.cursor() as cursor:
-            # Use parameterized query to update the subscription status
+            # Use a parameterized query to update the subscription status
             query = "UPDATE telebot_users SET Sub = %s WHERE chat_id = %s"
             cursor.execute(query, (sub, chat_id))
             # Commit the changes to the database
@@ -72,28 +72,23 @@ def change_sub_status(chat_id, conn, sub):
         print(f"Database error: {e}")
 
 # Function to handle the '/stat24' command
-def handle_stat24_command(chat_id, bot_token, conn):
+def handle_stat24_command(chat_id, conn):
     message_lastu = ''
     last_24_users = get_last_24_users(conn)
     # Loop through the last_24_users list of tuples
     for user_data in last_24_users:
-            # Access each element in the tuple by index
-            id = user_data[0]
-            chat_id2 = user_data[1]
-            name = user_data[2]
-            lastupd = user_data[3]
-            lastmsg = user_data[4]
+        # Access each element in the tuple by index
+        id, chat_id2, name, lastupd, lastmsg = user_data
 
-            # Work with each variable as needed
-            message_lastu += f"ID: {id}\n"
-            message_lastu += f"Chat ID: {chat_id2}\n"
-            message_lastu += f"Name: {name}\n"
-            message_lastu += f"Last Update: {lastupd}\n"
-            message_lastu += f"Last Message: {lastmsg}\n"
-            message_lastu += "\n"
-      # Send the message to the Telegram bot
-    send_telegram_message(chat_id, message_lastu, bot_token)
-
+        # Work with each variable as needed
+        message_lastu += f"ID: {id}\n"
+        message_lastu += f"Chat ID: {chat_id2}\n"
+        message_lastu += f"Name: {name}\n"
+        message_lastu += f"Last Update: {lastupd}\n"
+        message_lastu += f"Last Message: {lastmsg}\n"
+        message_lastu += "\n"
+    # Send the message to the Telegram bot
+    bot.send_message(chat_id, message_lastu)
 
 # Function to find all subscribed chat IDs
 def find_subbed_chatids(conn):
@@ -111,192 +106,98 @@ def find_subbed_chatids(conn):
         print(f"Error: {e}")
         return []
 
-
 # Function to handle incoming Telegram updates
-def handle_telegram_update(update_data, bot_token, conn):
+@bot.message_handler(func=lambda message: True)
+def handle_telegram_update(message):
     # Define global variables
     global imgtosend
     global pdftosend
     global admin_name
 
-    if 'message' in update_data:
-        message_data = update_data['message']
-        chat_id = message_data['chat']['id']
-        name = message_data['chat']['username']
+    chat_id = message.chat.id
+    name = message.chat.username
 
-        if 'text' in message_data:
-            message_text = message_data['text']
+    if message.text:
+        message_text = message.text
 
-            # Check the message text for specific commands or keywords
-            if '/start' in message_text:
-                # Send the image right after the welcome message
-                send_image(chat_id, 'telebot-h-files/' + imgtosend, 'image/jpeg', imgtosend, bot_token)
+        # Create a custom keyboard markup
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        start_button = types.KeyboardButton('/start')
+        help_button = types.KeyboardButton('/help')
+        guide_button = types.KeyboardButton('/guide')
+        markup.row(start_button, help_button, guide_button)
 
-                # Handle the /start command
-                send_telegram_message(chat_id, 'Ivan Deus bot welcomes you! Type /guide or /help for all available commands', bot_token)
+        # Check the message text for specific commands or keywords
+        if '/start' in message_text:
+            # Send the image right after the welcome message
+            send_image(chat_id, 'telebot-h-files/' + imgtosend, 'image/jpeg', imgtosend)
 
-            elif '/sub' in message_text:
-                 sub = 1
-                 change_sub_status(chat_id, conn, sub)
-                 send_telegram_message(chat_id, "You have subscribed", bot_token)
-            elif '/unsub' in message_text:
-                 sub = 0
-                 change_sub_status(chat_id, conn, sub)
-                 send_telegram_message(chat_id, "You unsubscribed", bot_token)
-            elif '/forward' in message_text:
-                 # Find all subscribed chat IDs
-                 subscribed_chat_ids = find_subbed_chatids(conn)
-                 message_text = message_text[len('/forward '):] #cut command forward
-                 # Loop through the subscribed chat IDs and send the message
-                 for chat_id in subscribed_chat_ids:
-                     send_telegram_message(chat_id, message_text, bot_token)
-                     time.sleep(1)  # Add a delay
+            # Handle the /start command
+            bot.send_message(chat_id, 'Ivan Deus bot welcomes you! Type /guide or /help for all available commands', reply_markup=markup)
 
-            elif '/help' in message_text:
-                # Handle the /help command
-                send_telegram_message(chat_id, 'This is a help message. Try /start or /guide. You can subscribe with /sub and undo with /unsub', bot_token)
-            elif '/guide' in message_text:
-                # Handle the /guide command to send a PDF file
-                send_file(chat_id, 'telebot-h-files/' + pdftosend, 'application/pdf', pdftosend, bot_token)
-            elif '/stat24' in message_text and name == admin_name:
-                handle_stat24_command(chat_id, bot_token, conn)
-            else:
-                # Handle other user input as needed
-                send_telegram_message(chat_id, "I do not understand. Type /help for assistance.", bot_token)
+        elif '/sub' in message_text:
+            sub = 1
+            change_sub_status(chat_id, conn, sub)
+            bot.send_message(chat_id, "You have subscribed", reply_markup=markup)
+
+        elif '/unsub' in message_text:
+            sub = 0
+            change_sub_status(chat_id, conn, sub)
+            bot.send_message(chat_id, "You unsubscribed", reply_markup=markup)
+
+        elif '/forward' in message_text:
+            # Find all subscribed chat IDs
+            subscribed_chat_ids = find_subbed_chatids(conn)
+            message_text = message_text[len('/forward '):]  # cut the command forward
+            # Loop through the subscribed chat IDs and send the message
+            for chat_id in subscribed_chat_ids:
+                bot.send_message(chat_id, message_text)
+                time.sleep(1)  # Add a delay
+
+        elif '/help' in message_text:
+            # Handle the /help command
+            bot.send_message(chat_id, 'This is a help message. You can subscribe with /sub and unsubscribe with /unsub', reply_markup=markup)
+
+        elif '/guide' in message_text:
+            # Handle the /guide command to send a PDF file
+            send_file(chat_id, 'telebot-h-files/' + pdftosend, 'application/pdf', pdftosend, reply_markup=markup)
+
+        elif '/stat24' in message_text and name == admin_name:
+            handle_stat24_command(chat_id, conn)
+
         else:
-            # Handle non-text messages (e.g., stickers)
-            print(f"Received a non-text message")
+            # Handle other user input as needed
+            bot.send_message(chat_id, "I do not understand. Type /help for assistance", reply_markup=markup)
 
-    elif 'edited_message' in update_data:
-        # Handle edited messages if needed
-        pass
+    else:
+        # Handle non-text messages (e.g., stickers)
+        print(f"Received a non-text message")
 
 # Function to send an image to the Telegram bot
-def send_image(chat_id, file_path, file_type, file_name, bot_token):
+def send_image(chat_id, file_path, file_type, file_name):
     try:
-        url = f"https://api.telegram.org/bot{bot_token}/sendPhoto"
-
-        files = {
-            'photo': (file_name, open(file_path, 'rb'), file_type),
-        }
-
-        data = {
-            'chat_id': chat_id,
-        }
-
-        response = requests.post(url, data=data, files=files)
-
-        if response.status_code != 200:
-            # Handle the error
-            print(f"Telegram API error: {response.status_code} - {response.text}")
-
+        with open(file_path, 'rb') as photo:
+            bot.send_photo(chat_id, photo, caption=file_name)
     except Exception as e:
         # Handle any exceptions
         print(f"Error sending image to Telegram: {e}")
 
 # Function to send a file to the Telegram bot
-def send_file(chat_id, file_path, file_type, file_name, bot_token):
+def send_file(chat_id, file_path, file_type, file_name):
     try:
-        url = f"https://api.telegram.org/bot{bot_token}/sendDocument"
-
-        files = {
-            'document': (file_name, open(file_path, 'rb'), file_type),
-        }
-
-        data = {
-            'chat_id': chat_id,
-        }
-
-        response = requests.post(url, data=data, files=files)
-
-        if response.status_code != 200:
-            # Handle the error
-            print(f"Telegram API error: {response.status_code} - {response.text}")
-
+        with open(file_path, 'rb') as document:
+            bot.send_document(chat_id, document, caption=file_name)
     except Exception as e:
         # Handle any exceptions
-        print(f"Error sending file to Telegram: {e}")
+        print(f"Error sending file to Telegram: {e")
 
-# Function to send a message to the Telegram bot
-def send_telegram_message(chat_id, message, bot_token):
-    try:
-        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-        data = {
-            'chat_id': chat_id,
-            'text': message,
-        }
-
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.post(url, json=data, headers=headers)
-
-        if response.status_code != 200:
-            # Handle the error
-            print(f"Telegram API error: {response.status_code} - {response.text}")
-
-
-    except Exception as e:
-        # Handle any exceptions
-        print(f"Error sending Telegram message: {e}")
-
-# Telegram bot
-@app.route('/')
-def hello():
-    return render_template('hello.html')
-
-
-# Main logic
-@app.route('/telebot-hook1x', methods=['POST'])
-def telebothook1x():
-    try:
-        # Create a database connection with Unix socket
-        conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
-
-        # Read post input
-        update_data = request.get_json()
-        # Debug: Print the received update_data
-        ##print("Received update_data:", update_data)
-        if 'message' in update_data:
-            if 'text' in update_data['message']:
-               message = update_data['message']['text']
-            else:
-               message = " "
-        elif 'edited_message'  in update_data:
-            message = update_data['edited_message']
-        else:
-            message = " "
-
-        name = update_data['message']['chat']['username']
-        chat_id = update_data['message']['chat']['id']
-
-
-        first_name = update_data['message']['chat']['first_name']
-        if 'last_name' in update_data['message']['chat']:
-            last_name = update_data['message']['chat']['last_name']
-        else:
-            last_name = " "
-
-        # Call your add_or_update_user function to add/update the user in the database
-        add_or_update_user(chat_id, name, message, conn, first_name, last_name)
-
-        handle_telegram_update(update_data, bot_token, conn)
-        # Return a JSON response
-        return jsonify(message)
-
-    except pymysql.Error as e:
-        print(f"Database error: {e}")
-        return jsonify(error="Database error")
-
-    finally:
-        # Close the database connection
-        if conn:
-            conn.close()
-
-    # If there's no message to handle, return an empty response
-    return '', 204  # HTTP 204 No Content
-
+# Telegram bot polling
 if __name__ == '__main__':
-    # Change the host and port here
-    app.run(port=1500)
+    # Create a database connection with Unix socket
+    conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
+
+    # Start the bot polling
+    bot.polling(none_stop=True)
+
+    # Close the database connection when the bot is stopped
+    conn.close()
