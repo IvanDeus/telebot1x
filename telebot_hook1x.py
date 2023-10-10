@@ -134,9 +134,10 @@ def handle_telegram_update(update_data, bot_token, conn):
 
             # Check the message text for specific commands or keywords
             if '/start' in message_text:
-                # Send the image right after the welcome message
+                # Send the image as the welcome message
                 ##send_image(chat_id, 'telebot-h-files/' + imgtosend, 'image/jpeg', imgtosend, bot_token)
-                bot.send_photo(chat_id, 'telebot-h-files/' + imgtosend, caption=imgtosend)
+                with open('telebot-h-files/' + imgtosend, 'rb') as photo:
+                    bot.send_photo(chat_id, photo)
                 # Handle the /start command
                 send_telegram_message(chat_id, 'Ivan Deus bot welcomes you! Type /guide or /help for all available commands', bot_token)
 
@@ -162,7 +163,9 @@ def handle_telegram_update(update_data, bot_token, conn):
                 send_telegram_message(chat_id, 'This is a help message. Try /start or /guide. You can subscribe with /sub and undo with /unsub', bot_token)
             elif '/guide' in message_text:
                 # Handle the /guide command to send a PDF file
-                send_file(chat_id, 'telebot-h-files/' + pdftosend, 'application/pdf', pdftosend, bot_token)
+                with open('telebot-h-files/' + pdftosend, 'rb') as pdf_file:
+                    bot.send_document(chat_id, pdf_file, caption="An epic guide for you")
+
             elif '/stat24' in message_text and name == admin_name:
                 handle_stat24_command(chat_id, bot_token, conn)
             else:
@@ -176,29 +179,6 @@ def handle_telegram_update(update_data, bot_token, conn):
         # Handle edited messages if needed
         pass
 
-
-# Function to send a file to the Telegram bot
-def send_file(chat_id, file_path, file_type, file_name, bot_token):
-    try:
-        url = f"https://api.telegram.org/bot{bot_token}/sendDocument"
-
-        files = {
-            'document': (file_name, open(file_path, 'rb'), file_type),
-        }
-
-        data = {
-            'chat_id': chat_id,
-        }
-
-        response = requests.post(url, data=data, files=files)
-
-        if response.status_code != 200:
-            # Handle the error
-            print(f"Telegram API error: {response.status_code} - {response.text}")
-
-    except Exception as e:
-        # Handle any exceptions
-        print(f"Error sending file to Telegram: {e}")
 
 # Function to send a message to the Telegram bot
 def send_telegram_message(chat_id, message, bot_token):
