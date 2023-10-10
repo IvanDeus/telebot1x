@@ -4,6 +4,9 @@ from telebot import types
 import pymysql
 from datetime import datetime
 import time
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
 
 # Config import
 from telebot_hook1x_cfg import bot_token, admin_name, db_host, db_username, db_password, db_name, mysql_unix_socket, imgtosend, pdftosend
@@ -191,13 +194,15 @@ def send_file(chat_id, file_path, file_type, file_name):
         # Handle any exceptions
         print(f"Error sending file to Telegram: {e}")
 
-# Telegram bot polling
 if __name__ == '__main__':
     # Create a database connection with Unix socket
     conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
 
-    # Start the bot polling
-    bot.polling(none_stop=True)
+    @app.route('/telebot-hook1x', methods=['POST'])
+    def telebothook1x():
+        # Rest of the code remains the same
+
+    app.run(host='localhost', port=1500)
 
     # Close the database connection when the bot is stopped
     conn.close()
