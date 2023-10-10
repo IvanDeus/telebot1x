@@ -194,7 +194,7 @@ def send_file(chat_id, file_path, file_type, file_name):
         # Handle any exceptions
         print(f"Error sending file to Telegram: {e}")
 
-# Telegram bot polling
+# Telegram bot 
 if __name__ == '__main__':
     # Create a database connection with Unix socket
     conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
@@ -205,5 +205,3 @@ if __name__ == '__main__':
 
     app.run(host='localhost', port=1500)
 
-# Run the bot polling
-bot.polling(none_stop=True)
