@@ -189,7 +189,7 @@ def send_file(chat_id, file_path, file_type, file_name):
             bot.send_document(chat_id, document, caption=file_name)
     except Exception as e:
         # Handle any exceptions
-        print(f"Error sending file to Telegram: {e")
+        print(f"Error sending file to Telegram: {e}")
 
 # Telegram bot polling
 if __name__ == '__main__':
