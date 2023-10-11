@@ -224,10 +224,11 @@ def telebothook1x():
                  # Find all subscribed chat IDs
                 subscribed_chat_ids = find_subbed_chatids(conn)
                 message_text = message.text[len('/forward '):] #cut command forward
-                # Loop through the subscribed chat IDs and send the message
-                for chat_id in subscribed_chat_ids:
-                    bot.send_message(chat_id, message_text)
-                    time.sleep(1)  # Add a delay
+                if message_text: 
+                    # Loop through the subscribed chat IDs and send the message
+                   for uchat_id in subscribed_chat_ids:
+                       bot.send_message(uchat_id, message_text)
+                       time.sleep(1)  # Add a delay
             else:
                 handle_nostart(message) # all others imput
 
