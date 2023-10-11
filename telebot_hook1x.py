@@ -220,7 +220,7 @@ def telebothook1x():
             # handle admin commands
             elif '/stat24' in message.text and name == admin_name:
                 handle_stat24_command(chat_id, conn)
-            elif '/forward' in message.text:
+            elif '/forward' in message.text and name == admin_name:
                  # Find all subscribed chat IDs
                 subscribed_chat_ids = find_subbed_chatids(conn)
                 message_text = message.text[len('/forward '):] #cut command forward
