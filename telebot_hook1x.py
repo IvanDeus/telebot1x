@@ -3,7 +3,6 @@ from flask import Flask, request, jsonify, render_template
 import json
 import requests
 import pymysql
-from datetime import datetime
 import time
 import telebot
 
@@ -33,13 +32,11 @@ def add_or_update_user(chat_id, name, message, conn, first_name, last_name):
 
             if cursor.rowcount > 0:
                 # User exists, update the record
-                current_time = conn.escape_string(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-                update_query = f"UPDATE telebot_users SET lastupd = '{current_time}', lastmsg = '{message}' WHERE chat_id = '{chat_id_str}'"
+                update_query = f"UPDATE telebot_users SET lastmsg = '{message}' WHERE chat_id = '{chat_id_str}'"
                 cursor.execute(update_query)
             else:
                 # User does not exist, insert a new record
-                current_time = conn.escape_string(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-                insert_query = f"INSERT INTO telebot_users (chat_id, name, lastupd, lastmsg, first_name, last_name) VALUES ('{chat_id_str}', '{name}', '{current_time}', '{message}', '{first_name}', '{last_name}')"
+                insert_query = f"INSERT INTO telebot_users (chat_id, name, lastmsg, first_name, last_name) VALUES ('{chat_id_str}', '{name}', '{message}', '{first_name}', '{last_name}')"
                 cursor.execute(insert_query)
 
             # Commit the changes to the database
