@@ -403,7 +403,7 @@ def telebothook1x():
                 # forward user who called manager
                 fwd_umsg = str(chat_id) +": "+first_name+": "+ message.text
                 bot.send_message(manager_chat_id, fwd_umsg)
-                insert_into_chat_table(conn, chat_id, manager_chat_id, fwd_umsg, 'NOT REPLIED')
+                insert_into_chat_table(conn, chat_id, manager_chat_id, fwd_umsg, '  ')
             elif chat_id == int(manager_chat_id):
                 # extract user chat id from replied msg
                 if message.reply_to_message is not None:
