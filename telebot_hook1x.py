@@ -229,9 +229,6 @@ def get_manager_chat_id(conn):
         print(f"Error: {e}")
         return None
 
-##### get manager chat id
-manager_chat_id = get_manager_chat_id(conn)
-
 
 @bot.message_handler()
 def handle_nostart(message):
@@ -378,6 +375,9 @@ def telebothook1x():
         update = telebot.types.Update.de_json(json_string)
         # Analyze recived message
        ## print (update)
+        ##### get manager chat id
+        manager_chat_id = get_manager_chat_id(conn)
+
         if (update.message is not None) and (update.message.text is not None):
             message = update.message
             # Access name and chat_id only when there is a message
