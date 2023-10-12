@@ -5,8 +5,6 @@ This Python/MySQL-based Telegram bot is designed with simplicity in mind. It's r
 
 Users have the option to initiate a conversation with a human manager at any time using the designated command from the menu. This ensures meaningful interactions right within the bot. Furthermore, our human manager can easily send messages to subscribed users through the /forward command.
 
-Behind the scenes, our MySQL table is equipped to handle information for multiple administrators. These administrators possess the capability to utilize the /forward command to distribute posts from their specific Telegram groups to our subscribed users.
-
 For the smooth operation of this bot, the minimum system requirements are as follows: Python 3.10.12, MySQL version 5.5.54, and Flask.
 
 Installation Steps:
