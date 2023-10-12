@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Singirella Chat Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        /* Alternating row colors */
+        tr:nth-child(even) {
+            background-color: #f2f2f2; /* Light gray background for even rows */
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .page-link {
+            padding: 5px 10px;
+            margin: 0 5px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .page-link:hover {
+            background-color: #0056b3;
+        }
+
+        /* CSS class for infomessage */
+        .infomessage {
+            background-color: #e0f8aa;
+            text-align: left;
+            font-size: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+<h1>Singirella Chat Table</h1>
+<table>
+    <thead>
+        <tr>
+         <th>ID</th>
+            <th>Date</th>
+            <th>Chat_ID</th>
+            <th>Telegram Name</th>
+            <th>User Name</th>
+            <th>User Message</th>
+            <th>Admin name</th>
+            <th>Admin message</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user[0] }}</td>
+                <td>{{ user[1] }}</td>
+                <td>{{ user[2] }}</td>
+                <td>{{ user[3] }}</td>
+                <td>{{ user[4] }}</td>
+                <td>{{ user[5] }}</td>
+                <td>{{ user[6] }}</td>
+                <td>{{ user[7] }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+</body>
+
+</html>
