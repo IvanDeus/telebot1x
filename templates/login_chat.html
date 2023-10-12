@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bot Control Panel</title> <!-- Change the title here -->
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 18px; /* Increase font size */
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 60px;
+            text-align: left; /* Align content to the left */
+            margin: 0 24px; /* Add 24px margin to both left and right */
+        }
+
+        h1 {
+            font-size: 24px; /* Increase font size for the heading */
+            margin-bottom: 20px;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px; /* Increase font size */
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px; /* Increase font size */
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>
+                <h1>Singirella admin chat panel</h1>
+            </td>
+            <td>
+                <form method="POST">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required><br>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required><br>
+                    <input type="submit" value="Login">
+                </form>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
