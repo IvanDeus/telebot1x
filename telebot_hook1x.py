@@ -214,11 +214,23 @@ def get_step_status(chat_id, conn):
         print(f"Database error: {e}")
         return None
 
+def get_manager_chat_id(conn):
+    try:
+        with conn.cursor() as cursor:
+            query = "SELECT chat_id FROM telebot_admins WHERE chatmngr = 1 LIMIT 1"
+            cursor.execute(query)
+            result = cursor.fetchone()
+            if result:
+                return result[0]  # Return the chat_id if found
+            else:
+                return None  # Return None if admin user not found
+    except Exception as e:
+        # Handle any exceptions (e.g., database connection error)
+        print(f"Error: {e}")
+        return None
 
-
-
-
-
+##### get manager chat id
+manager_chat_id = get_manager_chat_id(conn)
 
 
 @bot.message_handler()
@@ -248,8 +260,6 @@ def handle_start(message):
     # Send a message with the inline keyboard
     bot.send_message(chat_id, msg1, reply_markup=keyboard)
 
-###### Dictionary to store active chats initiated by users
-manager_chat_id = '750334690'
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callback(call, conn):
     keyboard2 = types.InlineKeyboardMarkup()
