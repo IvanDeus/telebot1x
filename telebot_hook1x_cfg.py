@@ -1,6 +1,6 @@
 # Ivan Deus telebot py cfg
 
-# DB construction, copy this to MySQL to create a new table
+# DB construction, copy this into MySQL to create a new table
 ###
 '''...
 -- MySQL dump 10.13  Distrib 8.0.34, for Linux (x86_64)
