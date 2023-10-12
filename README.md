@@ -19,3 +19,4 @@ Installation Steps:
 6. You are now ready to start chatting with your bot.
 
 You can interact with the bot using the following available commands: /start, /help, /guide, /sub, /unsub and /stat24, /forward, /end (last three are exclusive to admin users).
+The bot manager has the option to log in to the following page: https://your-server/admin-chat, providing access to historical user chat data for review and analysis.
