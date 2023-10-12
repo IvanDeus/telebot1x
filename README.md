@@ -1,13 +1,13 @@
 # telebot1x (python version) made by IvanDeus (2023)
-If you find yourself needing to send text information, images, or PDF files via Telegram to a user, then this bot is the ideal solution for you.
+If your user care communication needs involve sending text, images, or PDF files via Telegram, this bot provides the perfect solution.
 
-This is a straightforward Telegram bot built on Python/MySQL. 
-It actively awaits user input, responds to a number of commands below and efficiently stores every user data in a MySQL table.
+This Python/MySQL-based Telegram bot is designed with simplicity in mind. It's responsive to a variety of user commands, adept at storing all chat data efficiently in a MySQL table, and offers a seamless experience.
 
-User can call a human manager any time by using correspondig command from a menu to start a meaningful conversation inside the bot.
-Also, human manager can send to subscribed users a message using /forward command.
+Users have the option to initiate a conversation with a human manager at any time using the designated command from the menu. This ensures meaningful interactions right within the bot. Furthermore, our human manager can easily send messages to subscribed users through the /forward command.
 
-The minimum system requirements for this bot are as follows: Python 3.10.12, MySQL version 5.5.54, and Flask.
+Behind the scenes, our MySQL table is equipped to handle information for multiple administrators. These administrators possess the capability to utilize the /forward command to distribute posts from their specific Telegram groups to our subscribed users.
+
+For the smooth operation of this bot, the minimum system requirements are as follows: Python 3.10.12, MySQL version 5.5.54, and Flask.
 
 Installation Steps:
 
