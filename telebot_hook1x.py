@@ -288,7 +288,7 @@ def handle_callback(call, conn):
         bot.send_message(manager_chat_id, f"{chat_id}: {user_name}: has initiated a chat. Respond via the bot.")
         change_step_status(chat_id, conn, 101)
         insert_into_chat_table(conn, chat_id, manager_chat_id, "Call manager", " ")
-
+        bot.send_message(chat_id, "Please wait for manager to get back to you")
 # Telegram bot
 @app.route('/')
 def hello():
