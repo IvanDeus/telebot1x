@@ -182,7 +182,7 @@ def find_admin_chatid(conn, adm_name):
         # Handle any exceptions (e.g., database connection error)
         print(f"Error: {e}")
         return None
-
+# Build user chats table, last 300 records, template allow to filter them 
 def get_user_chats_table(conn):
     try:
         with conn.cursor() as cursor:
