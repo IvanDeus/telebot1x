@@ -52,19 +52,21 @@
 
 <body>
 
-
 <h1>Singirella Chat Table</h1>
+
+<input type="text" id="telegramNameFilter" placeholder="Filter by Telegram Name" onkeyup="filterTable()">
+<button id="clearFilterButton" onclick="clearFilter()">Clear Filter</button>
 <table>
     <thead>
         <tr>
-         <th>ID</th>
+            <th>ID</th>
             <th>Date</th>
             <th>Chat_ID</th>
             <th>Telegram Name</th>
             <th>User Name</th>
             <th>User Message</th>
-            <th>Admin name</th>
-            <th>Admin message</th>
+            <th>Admin Name</th>
+            <th>Admin Message</th>
         </tr>
     </thead>
     <tbody>
@@ -73,7 +75,7 @@
                 <td>{{ user[0] }}</td>
                 <td>{{ user[1] }}</td>
                 <td>{{ user[2] }}</td>
-                <td>{{ user[3] }}</td>
+                <td><a href="#" onclick="applyFilter('{{ user[3] }}')">{{ user[3] }}</a></td>
                 <td>{{ user[4] }}</td>
                 <td>{{ user[5] }}</td>
                 <td>{{ user[6] }}</td>
@@ -83,6 +85,37 @@
     </tbody>
 </table>
 
+<script>
+function filterTable() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("telegramNameFilter");
+    filter = input.value.toUpperCase();
+    table = document.querySelector("table");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 1; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[3]; // Change the index to match the column you want to filter (Telegram Name)
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+
+function applyFilter(name) {
+    document.getElementById("telegramNameFilter").value = name;
+    filterTable();
+}
+
+function clearFilter() {
+    document.getElementById("telegramNameFilter").value = "";
+    filterTable();
+}
+</script>
 
 </body>
 
