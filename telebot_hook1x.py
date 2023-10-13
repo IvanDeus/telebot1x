@@ -213,7 +213,22 @@ def get_step_status(chat_id, conn):
         # Handle any database errors here
         print(f"Database error: {e}")
         return None
-
+# find if is there any users who needs manager attention
+def find_if_any_user_needs_mngr(conn):
+    try:
+        with conn.cursor() as cursor:
+            query = "SELECT id FROM telebot_users WHERE step = 101 LIMIT 1"
+            cursor.execute(query)
+            result = cursor.fetchone()
+            if result:
+                return result[0]  # Return the chat_id if found
+            else:
+                return None  # Return None if admin user not found
+    except Exception as e:
+        # Handle any exceptions (e.g., database connection error)
+        print(f"Error: {e}")
+        return None
+        
 def get_manager_chat_id(conn):
     try:
         with conn.cursor() as cursor:
@@ -415,6 +430,8 @@ def telebothook1x():
                 bot.send_message(manager_chat_id, fwd_umsg)
                 insert_into_chat_table(conn, chat_id, manager_chat_id, fwd_umsg, '  ')
             elif chat_id == int(manager_chat_id):
+		        # find if any user flag = 101 (user needs attenction)
+                if_any_user_needs_mngr = find_if_any_user_needs_mngr(conn)                
                 # extract user chat id from replied msg
                 if message.reply_to_message is not None:
                    reply_text = message.reply_to_message.text
@@ -426,7 +443,8 @@ def telebothook1x():
                       bot.send_message(user_chat_id[0], "Manager: "+ message.text)
                    update_chat_table(conn, user_chat_id[0], message.text)
                 else:
-                   bot.send_message(chat_id, "No message is sent, try 'reply'. To stop chat with user reply /end")
+                   if if_any_user_needs_mngr:
+                      bot.send_message(chat_id, "No message is sent, try 'reply'. To stop chat with user reply /end")
             else:
                 handle_nostart(message) # all others imput
 
