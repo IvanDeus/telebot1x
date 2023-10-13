@@ -189,7 +189,7 @@ def get_user_chats_table(conn):
              query = ("SELECT tc.id AS telebot_chat_id, tc.lastupd AS telebot_chat_lastupd,"
           " tc.uchat_id, tu.name AS user_name, tu.first_name AS user_frstname, tc.umsg, ta.name AS admin_name, tc.mngmsg"
           " FROM telebot_chats tc JOIN telebot_users tu ON tc.uchat_id = tu.chat_id"
-          " JOIN telebot_admins ta ON tc.mngchat_id = ta.chat_id ORDER BY telebot_chat_lastupd DESC Limit 200")
+          " JOIN telebot_admins ta ON tc.mngchat_id = ta.chat_id ORDER BY telebot_chat_lastupd DESC Limit 300")
              cursor.execute(query)
              results = cursor.fetchall()
         return results
