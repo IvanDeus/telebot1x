@@ -55,6 +55,29 @@ CREATE TABLE `telebot_users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+--
+-- Table structure for table `telebot_vars`
+--
+DROP TABLE IF EXISTS `telebot_vars`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `telebot_vars` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `param` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `value` varchar(3800) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+--
+-- Dumping data for table `telebot_vars`
+--
+LOCK TABLES `telebot_vars` WRITE;
+/*!40000 ALTER TABLE `telebot_vars` DISABLE KEYS */;
+INSERT INTO `telebot_vars` VALUES (1,'imgtosend','Asya-B-aa250.jpg'),(2,'pdftosend','guide.pdf');
+/*!40000 ALTER TABLE `telebot_vars` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
 -- Dump completed 
 '''
 
@@ -68,7 +91,4 @@ db_password = "xxx"
 db_name = "xxx"
 # MySQL socket path
 mysql_unix_socket = "/var/run/mysqld/mysqld.sock"
-# Files to send
-imgtosend = 'Asya-B-aa250.jpg'
-pdftosend = 'guide.pdf'
 
