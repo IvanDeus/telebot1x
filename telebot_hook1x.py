@@ -36,6 +36,31 @@ def fetch_telebot_vars_into_dict(conn):
         print(f"Database error: {e}")
         return {}
 
+# get all variables for admin page
+def get_vars_table(conn):
+    try:
+        with conn.cursor() as cursor:
+            query = "SELECT * FROM telebot_vars Order by param"
+            cursor.execute(query)
+            results = cursor.fetchall()
+        return results
+    except Exception as e:
+        # Handle any exceptions (e.g., database connection error)
+        print(f"Error: {e}")
+        return []
+
+# set variables for admin page
+def set_vars_table(conn, id_v, value_v):
+    try:
+        with conn.cursor() as cursor:
+            query = "Update telebot_vars set value = %s Where id = %s "
+            cursor.execute(query, (value_v, id_v))
+            conn.commit()
+    except pymysql.Error as e:
+        # Handle any database errors here
+        print(f"Database error: {e}")
+
+
 # Function to add or update a user in the 'telebot_users' table
 def add_or_update_user(chat_id, name, message, conn, first_name, last_name):
     try:
@@ -389,10 +414,11 @@ def chat_page():
     if admin_cookie_id != '{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
         abort(403)  # Return a forbidden error if the cookie is not set
     try:
-        # get table
+        # get tables
         users = get_user_chats_table(conn)
+        params = get_vars_table(conn)
          # create user table
-        return render_template('chat_table.html', users=users)
+        return render_template('chat_table.html', users=users, params=params)
 
     except Exception as e:
         # Handle any exceptions here
@@ -402,6 +428,31 @@ def chat_page():
     conn.close()
 
 
+# Define the route and function for adding a user
+@app.route('/change-v', methods=['POST'])
+def change_v():
+    # Check if the admin_cookie_id is set
+    admin_cookie_id = request.cookies.get('chat_cookie_id')
+    admin_cookie_name = request.cookies.get('chat_cookie_name')
+    # Create a database connection with Unix socket
+    conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
+    # get admin chat id from cookie name
+    admin_chatid = find_admin_chatid(conn,admin_cookie_name)
+    if admin_cookie_id != '{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
+        abort(403)  # Return a forbidden error if the cookie is not set
+    try:
+       # Get chat_id and name from the form data
+       id_v = request.form['id_v']
+       value_v = request.form['field']
+       # Add the user to the telebot_admins table (you need to implement this)
+       set_vars_table(conn, id_v, value_v)
+       conn.close()
+       # Redirect to the admin page
+       return redirect('/chat_page')
+    except Exception as e:
+        # Handle any exceptions here
+        print(f"Error: {e}")
+        return "An error occurred."
 
 
 
