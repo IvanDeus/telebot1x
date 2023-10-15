@@ -182,7 +182,7 @@ def find_admin_chatid(conn, adm_name):
         # Handle any exceptions (e.g., database connection error)
         print(f"Error: {e}")
         return None
-# Build user chats table, last 300 records, template allow to filter them 
+# Build user chats table, last 300 records, template allow to filter them
 def get_user_chats_table(conn):
     try:
         with conn.cursor() as cursor:
@@ -228,7 +228,7 @@ def find_if_any_user_needs_mngr(conn):
         # Handle any exceptions (e.g., database connection error)
         print(f"Error: {e}")
         return None
-        
+
 def get_manager_chat_id(conn):
     try:
         with conn.cursor() as cursor:
@@ -294,6 +294,7 @@ def handle_callback(call, conn, manager_chat_id):
         with open('telebot-h-files/' + pdftosend, 'rb') as pdf_file:
            bot.send_document(chat_id, pdf_file, caption=msg1)
         add_or_update_user(chat_id, ' ', data, conn, ' ', ' ')
+        change_step_status(chat_id, conn, 1)
     elif data == '/help':
         bot.send_message(chat_id, msg2, reply_markup=keyboard2)
         add_or_update_user(chat_id, ' ', data, conn, ' ', ' ')
@@ -313,7 +314,7 @@ def handle_callback(call, conn, manager_chat_id):
            bot.send_message(manager_chat_id, f"{chat_id}: {user_name}: has initiated a chat. Respond via the bot.")
            change_step_status(chat_id, conn, 101)
            insert_into_chat_table(conn, chat_id, manager_chat_id, "Call manager", " ")
-	   # Notify user
+           # Notify user
            bot.send_message(chat_id, "Please wait for manager to get back to you")
 # Telegram bot
 @app.route('/')
@@ -434,8 +435,8 @@ def telebothook1x():
                 bot.send_message(manager_chat_id, fwd_umsg)
                 insert_into_chat_table(conn, chat_id, manager_chat_id, fwd_umsg, '  ')
             elif chat_id == int(manager_chat_id):
-		        # find if any user flag = 101 (user needs attenction)
-                if_any_user_needs_mngr = find_if_any_user_needs_mngr(conn)                
+                        # find if any user flag = 101 (user needs attenction)
+                if_any_user_needs_mngr = find_if_any_user_needs_mngr(conn)
                 # extract user chat id from replied msg
                 if message.reply_to_message is not None:
                    reply_text = message.reply_to_message.text
