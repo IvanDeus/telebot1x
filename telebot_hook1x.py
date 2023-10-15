@@ -308,7 +308,7 @@ def handle_callback(call, conn, manager_chat_id):
         bot.send_message(chat_id, "You unsubscribed")
     elif data == '/manager':
      # Notify the manager
-        if chat_id == manager_chat_id:
+        if chat_id == int(manager_chat_id):
            bot.send_message(chat_id, "You are the manager, stop with /end")
         else:
            bot.send_message(manager_chat_id, f"{chat_id}: {user_name}: has initiated a chat. Respond via the bot.")
