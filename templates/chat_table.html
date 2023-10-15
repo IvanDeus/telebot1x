@@ -47,16 +47,64 @@
             text-align: left;
             font-size: 10px;
         }
+
+
+
+/* Style for the modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 90%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  text-align: center;
+  width: 90%;
+  height: 80%;
+  margin-left: 55px;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  background-color: #ff0000; /* Red background for "X" button */
+  color: #fff; /* White text color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%; /* Makes it round */
+  font-size: 24px; /* Adjust font size as needed */
+}
+
+
+
+
+
     </style>
 </head>
 
 <body>
 
-<h1>Singirella Chat Table</h1>
+<h1>Bot Chat Table</h1>
 
 <input type="text" id="telegramNameFilter" placeholder="Filter by Telegram Name" onkeyup="filterTable()">
 <button id="clearFilterButton" onclick="clearFilter()">Clear Filter</button>
-<table>
+<table id="cht1">
     <thead>
         <tr>
             <th>ID</th>
@@ -90,7 +138,7 @@ function filterTable() {
     var input, filter, table, tr, td, i, txtValue;
     input = document.getElementById("telegramNameFilter");
     filter = input.value.toUpperCase();
-    table = document.querySelector("table");
+    table = document.querySelector("#cht1");
     tr = table.getElementsByTagName("tr");
 
     for (i = 1; i < tr.length; i++) {
@@ -117,6 +165,66 @@ function clearFilter() {
 }
 </script>
 
-</body>
 
+
+<h1>Bot Variables</h1>
+    
+<table id="var1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Param</th>
+            <th>Value</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for param in params %}
+            <tr>
+                <td>{{ param[0] }}</td>
+                <td>{{ param[1] }}</td>
+                <td>{{ param[2] }}</td>
+                <td>
+<button onclick="openModal('{{ param[0] }}','{{ param[1] }}',`{{ param[2] }}`)">Change value</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div id="myModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <p id="modalContent">"paramValue"</p>
+    <!-- allow admin to change variables -->
+    <form method="POST" action="/change-v">
+        <input type="hidden" name="id_v" id="paramId">
+        <textarea name="field" cols="80" rows="40" required id="paramValue"></textarea>
+        <br><input type="submit" value=" Change ">
+    </form>
+  </div>
+</div>
+<script>
+
+function openModal(paramId, paramParam, paramValue) {
+    var modal = document.getElementById("myModal");
+    var modalContent = document.getElementById("modalContent");
+    var paramIdField = document.getElementById("paramId");
+    var paramValueField = document.getElementById("paramValue");
+
+    // Set the modal content and input values based on the parameters
+    modalContent.innerHTML = paramParam;
+    paramIdField.value = paramId;
+    paramValueField.value = paramValue;
+    modal.style.display = "block";
+}
+
+
+function closeModal() {
+    var modal = document.getElementById("myModal");
+    modal.style.display = "none";
+}
+</script>
+
+</body>
 </html>
