@@ -307,10 +307,14 @@ def handle_callback(call, conn, manager_chat_id):
         bot.send_message(chat_id, "You unsubscribed")
     elif data == '/manager':
      # Notify the manager
-        bot.send_message(manager_chat_id, f"{chat_id}: {user_name}: has initiated a chat. Respond via the bot.")
-        change_step_status(chat_id, conn, 101)
-        insert_into_chat_table(conn, chat_id, manager_chat_id, "Call manager", " ")
-        bot.send_message(chat_id, "Please wait for manager to get back to you")
+        if chat_id == manager_chat_id:
+           bot.send_message(chat_id, "You are the manager, stop with /end")
+	else:
+           bot.send_message(manager_chat_id, f"{chat_id}: {user_name}: has initiated a chat. Respond via the bot.")
+           change_step_status(chat_id, conn, 101)
+           insert_into_chat_table(conn, chat_id, manager_chat_id, "Call manager", " ")
+	   # Notify user
+           bot.send_message(chat_id, "Please wait for manager to get back to you")
 # Telegram bot
 @app.route('/')
 def hello():
