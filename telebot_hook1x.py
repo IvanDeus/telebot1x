@@ -273,7 +273,7 @@ def handle_start(message):
     bot.send_message(chat_id, msg1, reply_markup=keyboard)
 
 @bot.callback_query_handler(func=lambda call: True)
-def handle_callback(call, conn):
+def handle_callback(call, conn, manager_chat_id):
     keyboard2 = types.InlineKeyboardMarkup()
     button1 = types.InlineKeyboardButton('Guide', callback_data='/guide')
     button3 = types.InlineKeyboardButton('Sub', callback_data='/sub')
@@ -450,7 +450,7 @@ def telebothook1x():
 
         elif update.callback_query is not None:
             call = update.callback_query
-            handle_callback(call, conn)  # Call the function to handle the callback query
+            handle_callback(call, conn, manager_chat_id)  # Call the function to handle the callback query
 
     except pymysql.Error as e:
         print(f"Database error: {e}")
