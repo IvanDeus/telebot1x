@@ -9,12 +9,32 @@ from telebot import types
 
 app = Flask(__name__)
 # Config import
-from telebot_hook1x_cfg import bot_token, admin_name, db_host, db_username, db_password, db_name, mysql_unix_socket, imgtosend, pdftosend
+from telebot_hook1x_cfg import bot_token, admin_name, db_host, db_username, db_password, db_name, mysql_unix_socket
 
 # Initialize the telebot
 bot = telebot.TeleBot(bot_token)
 
 # ... Code begins
+# fetch all config vars defined in mysql
+def fetch_telebot_vars_into_dict(conn):
+    try:
+        with conn.cursor() as cursor:
+            query = "SELECT param, value FROM telebot_vars"
+            cursor.execute(query)
+            result = cursor.fetchall()
+
+            telebot_vars = {}  # Initialize an empty dictionary
+
+            for row in result:
+                param, value = row
+                telebot_vars[param] = value  # Add data to the dictionary
+
+            return telebot_vars
+
+    except pymysql.Error as e:
+        # Handle any database errors here
+        print(f"Database error: {e}")
+        return {}
 
 # Function to add or update a user in the 'telebot_users' table
 def add_or_update_user(chat_id, name, message, conn, first_name, last_name):
@@ -244,8 +264,7 @@ def get_manager_chat_id(conn):
         print(f"Error: {e}")
         return None
 
-
-@bot.message_handler()
+# telebot hadle user input
 def handle_nostart(message):
     chat_id = message.chat.id
     msg1 = ("I do not understand. Press 'help' for assistance. ")
@@ -255,9 +274,11 @@ def handle_nostart(message):
     keyboard.add(button2)
     bot.send_message(chat_id, msg1, reply_markup=keyboard)
 
-@bot.message_handler(commands=['start'])
-def handle_start(message):
+def handle_start(message, telebot_vars):
     chat_id = message.chat.id
+
+    imgtosend = telebot_vars['imgtosend']
+
     msg1 = ("Ivan Deus bot welcomes you! "
             "To get file press 'guide' or press 'help' for all available commands")
     # Create an inline keyboard
@@ -272,8 +293,9 @@ def handle_start(message):
     # Send a message with the inline keyboard
     bot.send_message(chat_id, msg1, reply_markup=keyboard)
 
-@bot.callback_query_handler(func=lambda call: True)
-def handle_callback(call, conn, manager_chat_id):
+def handle_callback(call, conn, manager_chat_id, telebot_vars):
+
+    pdftosend = telebot_vars['pdftosend']
     keyboard2 = types.InlineKeyboardMarkup()
     button1 = types.InlineKeyboardButton('Guide', callback_data='/guide')
     button3 = types.InlineKeyboardButton('Sub', callback_data='/sub')
@@ -389,7 +411,8 @@ def telebothook1x():
     try:
         # Create a database connection with Unix socket
         conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
-
+        # get config variables
+        telebot_vars = fetch_telebot_vars_into_dict(conn)
         #VERS 2 Get update array
         json_string = request.get_data().decode('UTF-8')
         update = telebot.types.Update.de_json(json_string)
@@ -415,7 +438,7 @@ def telebothook1x():
             user_step_stat = get_step_status(chat_id, conn)
             # Handle start command
             if message.text == '/start':
-                handle_start(message)
+                handle_start(message, telebot_vars)
             # handle admin commands
             elif '/stat24' in message.text and name == admin_name:
                 handle_stat24_command(chat_id, conn)
@@ -455,7 +478,7 @@ def telebothook1x():
 
         elif update.callback_query is not None:
             call = update.callback_query
-            handle_callback(call, conn, manager_chat_id)  # Call the function to handle the callback query
+            handle_callback(call, conn, manager_chat_id, telebot_vars)  # handle the callback query
 
     except pymysql.Error as e:
         print(f"Database error: {e}")
