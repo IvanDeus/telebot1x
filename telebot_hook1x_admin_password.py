@@ -24,11 +24,11 @@ def store_or_update_password(username, password):
 
     if user_data:
         # User exists, update the password
-        hashed_password = bcrypt.using(schemes=['bcrypt']).hash(password)
+        hashed_password = bcrypt.hash(password)
         cursor.execute("UPDATE telebot_admins SET passwd = %s WHERE name = %s", (hashed_password, username))
     else:
         # User doesn't exist, insert a new record
-        hashed_password = bcrypt.using(schemes=['bcrypt']).hash(password)
+        hashed_password = bcrypt.hash(password)
         cursor.execute("INSERT INTO telebot_admins (name, passwd) VALUES (%s, %s)", (username, hashed_password))
 
     conn.commit()
