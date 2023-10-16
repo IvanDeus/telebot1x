@@ -288,9 +288,9 @@ def get_manager_chat_id(conn):
         return None
 
 # telebot hadle user input
-def handle_nostart(message):
+def handle_nostart(message, telebot_vars):
     chat_id = message.chat.id
-    msg1 = ("I do not understand. Press 'help' for assistance. ")
+    msg1 = telebot_vars['msg1'] 
     # Create an inline keyboard
     keyboard = types.InlineKeyboardMarkup()
     button2 = types.InlineKeyboardButton('Help', callback_data='/help')
@@ -301,9 +301,7 @@ def handle_start(message, telebot_vars):
     chat_id = message.chat.id
 
     imgtosend = telebot_vars['imgtosend']
-
-    msg1 = ("Ivan Deus bot welcomes you! "
-            "To get file press 'guide' or press 'help' for all available commands")
+    msg2 = telebot_vars['msg2'] 
     # Create an inline keyboard
     keyboard = types.InlineKeyboardMarkup()
     button1 = types.InlineKeyboardButton('Guide', callback_data='/guide')
@@ -314,7 +312,7 @@ def handle_start(message, telebot_vars):
     with open('telebot-h-files/' + imgtosend, 'rb') as photo:
         bot.send_photo(chat_id, photo)
     # Send a message with the inline keyboard
-    bot.send_message(chat_id, msg1, reply_markup=keyboard)
+    bot.send_message(chat_id, msg2, reply_markup=keyboard)
 
 def handle_callback(call, conn, manager_chat_id, telebot_vars):
 
@@ -519,7 +517,7 @@ def telebothook1x():
                    if if_any_user_needs_mngr:
                       bot.send_message(chat_id, "No message is sent, try 'reply'. To stop chat with user reply /end")
             else:
-                handle_nostart(message) # all others imput
+                handle_nostart(message, telebot_vars) # all others imput
 
         elif update.callback_query is not None:
             call = update.callback_query
