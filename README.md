@@ -14,7 +14,8 @@ Installation Steps:
 3. Insert your bot token and credentials into the telebot_hook1x_cfg.py configuration file.
 4. Place all bot files in a publicly accessible folder via https. You can use Flask/gunicorn Python module to listen to user requests.
 5. Establish a webhook, ensuring it uses HTTPS, and point it to the following URL: https://your-server/telebot-hook1x. All information regarding webhooks can be found here: https://core.telegram.org/bots/webhooks
-6. You are now ready to start chatting with your bot.
+6. Add at least one admin using telebot_hook1x_admin_password.py
+7. You are now ready to start chatting with your bot.
 
 You can interact with the bot using the following available commands: /start, /help, /guide, /sub, /unsub and /stat24, /forward, /end (last three are exclusive to admin users).
 The bot manager has the option to log in to the following page: https://your-server/admin-chat, providing access to historical user chat data for review and analysis.
