@@ -399,13 +399,13 @@ def login_chat():
 @app.route('/chat_page', methods=['GET'])
 def chat_page():
     # Check if the admin_cookie_id is set
-    admin_cookie_id = request.cookies.get('chat_cookie_id')
-    admin_cookie_name = request.cookies.get('chat_cookie_name')
+    chat_cookie_id = request.cookies.get('chat_cookie_id')
+    chat_cookie_name = request.cookies.get('chat_cookie_name')
     # Create a database connection with Unix socket
     conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
     # get admin chat id from cookie name
-    admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn,admin_cookie_name)
-    if admin_cookie_id != '{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
+    admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn,chat_cookie_name)
+    if chat_cookie_id != '{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
         abort(403)  # Return a forbidden error if the cookie is not set
     try:
         # get tables
@@ -426,13 +426,13 @@ def chat_page():
 @app.route('/change-v', methods=['POST'])
 def change_v():
     # Check if the admin_cookie_id is set
-    admin_cookie_id = request.cookies.get('chat_cookie_id')
-    admin_cookie_name = request.cookies.get('chat_cookie_name')
+    chat_cookie_id = request.cookies.get('chat_cookie_id')
+    chat_cookie_name = request.cookies.get('chat_cookie_name')
     # Create a database connection with Unix socket
     conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
     # get admin chat id from cookie name
-    admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn,admin_cookie_name)
-    if admin_cookie_id != '{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
+    admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn,chat_cookie_name)
+    if chat_cookie_id != '{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
         abort(403)  # Return a forbidden error if the cookie is not set
     try:
        # Get chat_id and name from the form data
