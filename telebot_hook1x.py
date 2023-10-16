@@ -328,18 +328,17 @@ def handle_callback(call, conn, manager_chat_id, telebot_vars):
     chat_id = call.message.chat.id
     data = call.data
     user_name = call.message.chat.username
-    msg1 = ("Super guide! Enjoy!")
-    msg2 = ("This is a help message. Try /start or 'guide'. "
-            "You can subscribe with 'sub' and undo with 'unsub'")
+    msg3 = telebot_vars['msg3']
+    msg4 =  = telebot_vars['msg4'] 
 
     if data == '/guide':
          # Handle the /guide command to send a PDF file
         with open('telebot-h-files/' + pdftosend, 'rb') as pdf_file:
-           bot.send_document(chat_id, pdf_file, caption=msg1)
+           bot.send_document(chat_id, pdf_file, caption=msg3)
         add_or_update_user(chat_id, ' ', data, conn, ' ', ' ')
         change_step_status(chat_id, conn, 1)
     elif data == '/help':
-        bot.send_message(chat_id, msg2, reply_markup=keyboard2)
+        bot.send_message(chat_id, msg4, reply_markup=keyboard2)
         add_or_update_user(chat_id, ' ', data, conn, ' ', ' ')
     elif data == '/sub':
         sub = 1
