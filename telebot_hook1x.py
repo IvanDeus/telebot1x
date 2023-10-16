@@ -213,20 +213,17 @@ def insert_into_chat_table(conn, uchat_id, mngchat_id, umsg, mngmsg):
         # Handle any database errors here
         print(f"Database error: {e}")
 
-def find_admin_chatid(conn, adm_name):
-    try:
-        with conn.cursor() as cursor:
-            query = "SELECT chat_id FROM telebot_admins WHERE name = %s LIMIT 1"
-            cursor.execute(query, (adm_name,))
-            result = cursor.fetchone()
-            if result:
-                return result[0]  # Return the chat_id if found
-            else:
-                return None  # Return None if admin user not found
-    except Exception as e:
-        # Handle any exceptions (e.g., database connection error)
-        print(f"Error: {e}")
-        return None
+# Function to retrieve admin chat ID and hashed password from the database
+def find_admin_chatid_and_password(conn, username):
+    cursor = conn.cursor()
+    cursor.execute("SELECT chat_id, passwd FROM telebot_admins WHERE name = %s", (username,))
+    result = cursor.fetchone()
+    cursor.close()
+    if result:
+        admin_chatid, hashed_db_password = result
+        return admin_chatid, hashed_db_password
+    return None, None
+
 # Build user chats table, last 300 records, template allow to filter them
 def get_user_chats_table(conn):
     try:
@@ -369,37 +366,33 @@ def hello():
     return render_template('hello.html')
 
 
-
 # chat login route
 @app.route('/admin-chat', methods=['GET', 'POST'])
 def login_chat():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        # get admin chat id from a db for auth
+
+        # Get admin chat ID and hashed password from the database
         conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
-        admin_chatid = find_admin_chatid(conn,username)
-        # Close the database connection
+        admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn, username)
         conn.close()
-        # Check if the provided admin credentials are correct
-        if admin_chatid and password == db_password:
+
+        if admin_chatid and pbkdf2_sha256.verify(password, hashed_db_password):
             try:
-                # Create a response object and set cookies
-                response = make_response(redirect(url_for('chat_page')))  # Redirect to admin_page
-                # check admin cookie
-                response.set_cookie('chat_cookie_id', '{admin_chatid}cookie_chat_passed_tst1212')
-                response.set_cookie('chat_cookie_name', '{username}')
-                return response  # Redirect to the admin page
+                response = make_response(redirect(url_for('chat_page')))
+                # Set cookies
+                response.set_cookie('chat_cookie_id', f'{admin_chatid}cookie_chat_passed_tst1212')
+                response.set_cookie('chat_cookie_name', username)
+                return response
 
             except Exception as e:
-                # Handle any exceptions here
                 print(f"Error: {e}")
                 return "An error occurred."
         else:
             return "Invalid admin credentials. Please try again."
 
     return render_template('login_chat.html')
-
 
 
 @app.route('/chat_page', methods=['GET'])
@@ -410,7 +403,7 @@ def chat_page():
     # Create a database connection with Unix socket
     conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
     # get admin chat id from cookie name
-    admin_chatid = find_admin_chatid(conn,admin_cookie_name)
+    admin_chatid = find_admin_chatid_and_password(conn,admin_cookie_name)
     if admin_cookie_id != '{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
         abort(403)  # Return a forbidden error if the cookie is not set
     try:
@@ -437,7 +430,7 @@ def change_v():
     # Create a database connection with Unix socket
     conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
     # get admin chat id from cookie name
-    admin_chatid = find_admin_chatid(conn,admin_cookie_name)
+    admin_chatid = find_admin_chatid_and_password(conn,admin_cookie_name)
     if admin_cookie_id != '{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
         abort(403)  # Return a forbidden error if the cookie is not set
     try:
