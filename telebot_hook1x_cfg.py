@@ -16,6 +16,7 @@ CREATE TABLE `telebot_admins` (
   `message_id` varchar(255) DEFAULT NULL,
   `pendingmsg` tinyint(1) NOT NULL DEFAULT '0',
   `chatmngr` smallint DEFAULT '0',
+  `passwd` varchar(255),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
