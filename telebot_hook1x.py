@@ -329,7 +329,7 @@ def handle_callback(call, conn, manager_chat_id, telebot_vars):
     data = call.data
     user_name = call.message.chat.username
     msg3 = telebot_vars['msg3']
-    msg4 =  = telebot_vars['msg4'] 
+    msg4 = telebot_vars['msg4'] 
 
     if data == '/guide':
          # Handle the /guide command to send a PDF file
