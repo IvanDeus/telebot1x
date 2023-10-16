@@ -405,7 +405,7 @@ def chat_page():
     conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
     # get admin chat id from cookie name
     admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn,chat_cookie_name)
-    if chat_cookie_id != '{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
+    if chat_cookie_id != f'{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
         abort(403)  # Return a forbidden error if the cookie is not set
     try:
         # get tables
@@ -432,7 +432,7 @@ def change_v():
     conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
     # get admin chat id from cookie name
     admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn,chat_cookie_name)
-    if chat_cookie_id != '{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
+    if chat_cookie_id != f'{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
         abort(403)  # Return a forbidden error if the cookie is not set
     try:
        # Get chat_id and name from the form data
