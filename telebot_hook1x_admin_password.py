@@ -1,12 +1,8 @@
 import sys
 import pymysql
 from passlib.hash import bcrypt
-
-# Database credentials
-db_host = "your_db_host"
-db_username = "your_db_username"
-db_password = "your_db_password"
-db_name = "your_db_name"
+# Import your database credentials
+from telebot_hook1x_cfg import db_host, db_username, db_password, db_name, mysql_unix_socket
 
 # Function to create a database connection
 def create_db_connection():
