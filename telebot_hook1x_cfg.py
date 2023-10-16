@@ -74,11 +74,10 @@ CREATE TABLE `telebot_vars` (
 --
 LOCK TABLES `telebot_vars` WRITE;
 /*!40000 ALTER TABLE `telebot_vars` DISABLE KEYS */;
-INSERT INTO `telebot_vars` VALUES (1,'imgtosend','Asya-B-aa250.jpg'),(2,'pdftosend','guide.pdf');
+INSERT INTO `telebot_vars` VALUES (1,'imgtosend','Asya-B-aa250.jpg'),(2,'pdftosend','guide.pdf'),(3,'msg1','I do not understand. Press \'help\' for assistance.'),(4,'msg2','Ivan Deus bot welcomes you! To get file press \'guide\' or press \'help\' for all available commands '),(5,'msg3','Super guide! Enjoy! '),(6,'msg4','This is a help message. Try /start or \'guide\'. \r\nYou can subscribe with \'sub\' and undo with \'unsub\'.\r\n');
 /*!40000 ALTER TABLE `telebot_vars` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
 -- Dump completed 
 '''
 
