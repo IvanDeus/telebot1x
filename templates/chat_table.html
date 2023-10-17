@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Singirella Chat Table</title>
+    <title>Telebot1x Chat Table</title>
     <style>
         table {
             border-collapse: collapse;
@@ -49,7 +48,6 @@
         }
 
 
-
 /* Style for the modal */
 .modal {
   display: none;
@@ -92,19 +90,29 @@
 }
 
 
+        /* Collapsible button style */
+        .collapsible-button {
+            cursor: pointer;
+        }
 
-
+        .collapsible-content {
+            display: none;
+        }
 
     </style>
 </head>
 
 <body>
-
 <h1>Bot Chat Table</h1>
+
+<!-- Add a button to toggle the chat table -->
+<div id="chatTableButton" class="collapsible-button" onclick="toggleTable('cht1', 'chatTableButton')">[ v ] Hide table</div>
+<br>
 
 <input type="text" id="telegramNameFilter" placeholder="Filter by Telegram Name" onkeyup="filterTable()">
 <button id="clearFilterButton" onclick="clearFilter()">Clear Filter</button>
-<table id="cht1">
+
+<table id="cht1" class="collapsible-content" style="display: table;">
     <thead>
         <tr>
             <th>ID</th>
@@ -134,6 +142,21 @@
 </table>
 
 <script>
+
+function toggleTable(tableId, buttonId) {
+    var table = document.getElementById(tableId);
+    var button = document.getElementById(buttonId);
+
+    if (table.style.display === "none" || table.style.display === "") {
+        table.style.display = "table";
+        button.textContent = "[ v ] Hide table";
+    } else {
+        table.style.display = "none";
+        button.textContent = "[>] Show table";
+    }
+}
+
+
 function filterTable() {
     var input, filter, table, tr, td, i, txtValue;
     input = document.getElementById("telegramNameFilter");
@@ -167,9 +190,14 @@ function clearFilter() {
 
 
 
+
 <h1>Bot Variables</h1>
-    
-<table id="var1">
+
+<!-- Add a button to toggle the variables table -->
+<div id="variablesButton" class="collapsible-button" onclick="toggleTable('var1', 'variablesButton')">[>] Show table</div>
+
+
+<table id="var1" class="collapsible-content">
     <thead>
         <tr>
             <th>ID</th>
@@ -204,7 +232,9 @@ function clearFilter() {
     </form>
   </div>
 </div>
+
 <script>
+
 
 function openModal(paramId, paramParam, paramValue) {
     var modal = document.getElementById("myModal");
@@ -227,4 +257,5 @@ function closeModal() {
 </script>
 
 </body>
+
 </html>
