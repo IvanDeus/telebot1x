@@ -375,7 +375,7 @@ def login_chat():
         conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
         admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn, username)
         conn.close()
-
+        time.sleep(1)
         if admin_chatid and pbkdf2_sha256.verify(password, hashed_db_password):
             try:
                 response = make_response(redirect(url_for('chat_page')))
