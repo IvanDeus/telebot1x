@@ -142,24 +142,23 @@
 <h1>Bot Scheduler</h1>
 <div id="scButton" class="collapsible-button" onclick="toggleTable('sch1', 'scButton')">[>] Show table</div>
 <table id="sch1" class="collapsible-content">
-        {% for sch2 in telebot_sched %}
+        {% for sch2 in sched_vars %}
         <tr>
             <td>
-                <div class="{% if sch2.t_out == 0 %}muted-block{% else %}rounded-block{% endif %}">
+                <div class="{% if sch2[2] == 0 %}muted-block{% else %}rounded-block{% endif %}">
                     <h3>1st message</h3>
                     <p id=output1>Timeout: </p>
-                    <p class="rounded-block2" id=output2></p>
+                    <p class="rounded-block2" id=output2>'{{ sch2[3] }}'</p>
                     <label class="checkbox">Checkbox 1 <input type="checkbox" ></label>
                     <label class="checkbox">Checkbox 2 <input type="checkbox" ></label>
                     <label class="checkbox">Checkbox 3 <input type="checkbox" ></label>
                     <label class="checkbox">Checkbox 4 <input type="checkbox" ></label>
-        <button onclick="openModal(1,'message1',telebot_vars['message1'])">Modify</button>
+        <button onclick="openModal(1,'message1',sch2[3])">Modify</button>
                 </div>
             </td>
 
         </tr>
 </table>
-
 
 
 
