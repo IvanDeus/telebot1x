@@ -460,7 +460,7 @@ def change_v():
        # Get chat_id and name from the form data
        id_v = request.form['id_v']
        value_v = request.form['field']
-       # Add the user to the telebot_admins table (you need to implement this)
+       # set variables 
        set_vars_table(conn, id_v, value_v)
        conn.close()
        # Redirect to the admin page
@@ -469,6 +469,36 @@ def change_v():
         # Handle any exceptions here
         print(f"Error: {e}")
         return "An error occurred."
+
+@app.route('/change-s', methods=['POST'])
+def change_s():
+    # Check if the admin_cookie_id is set
+    chat_cookie_id = request.cookies.get('chat_cookie_id')
+    chat_cookie_name = request.cookies.get('chat_cookie_name')
+    # Create a database connection with Unix socket
+    conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
+    # get admin chat id from cookie name
+    admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn,chat_cookie_name)
+    if chat_cookie_id != f'{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
+        abort(403)  # Return a forbidden error if the cookie is not set
+    try:
+       # Get  data
+       id_v = request.form['id_v']
+       t_out = request.form['t_out']
+       simg = request.form['simg']
+       message = request.form['message']
+       ukeys = request.form['ukeys']
+
+       # set scheduler
+       set_scheduled_table(conn, id_v, t_out, simg, message, ukeys)
+       conn.close()
+       # Redirect to the admin page
+       return redirect('/chat_page')
+    except Exception as e:
+        # Handle any exceptions here
+        print(f"Error: {e}")
+        return "An error occurred."
+
 
 
 
