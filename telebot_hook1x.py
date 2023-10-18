@@ -65,7 +65,7 @@ def set_vars_table(conn, id_v, value_v):
 def get_scheduled_table(conn):
     try:
         with conn.cursor() as cursor:
-            query = "SELECT * FROM telebot_shed Order by id"
+            query = "SELECT * FROM telebot_sched Order by id"
             cursor.execute(query)
             results = cursor.fetchall()
         return results
