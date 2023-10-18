@@ -74,6 +74,17 @@ def get_scheduled_table(conn):
         print(f"Error: {e}")
         return []
 
+# set schedule for admin page
+def set_scheduled_table(conn, id_v, value_v):
+    try:
+        with conn.cursor() as cursor:
+            query = "Update telebot_sched set t_out = %s, simg = %s, message = %s, ukeys = %s Where id = %s "
+            cursor.execute(query, (t_out, simg, messenge, ukeys, id_v))
+            conn.commit()
+    except pymysql.Error as e:
+        # Handle any database errors here
+        print(f"Database error: {e}")
+
 
 # Function to add or update a user in the 'telebot_users' table
 def add_or_update_user(chat_id, name, message, conn, first_name, last_name):
