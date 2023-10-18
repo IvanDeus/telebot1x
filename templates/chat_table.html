@@ -99,19 +99,66 @@
             display: none;
         }
 
+
+
+        /* Define styles for the rounded block */
+        .rounded-block {
+            border: 2px solid #000;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 5px;
+            background-color: #ddddff;
+        }
+        .muted-block {
+            border: 2px solid #000;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 5px;
+            background-color: #202022;
+        }
+        .rounded-block2 {
+          width: 48ch;
+          height: 20em;
+            border: 1px solid #000;
+            border-radius: 10px;
+            padding: 5px;
+            margin: 5px;
+            background-color: #f5f5ff;
+            overflow: auto;
+        }
+        /* Add styles for checkboxes */
+        .checkbox {
+            display: block;
+        }
+
+
+
+
+        
     </style>
 </head>
 
 <body>
-
-<table id=sch1>
+<h1>Bot Scheduler</h1>
+<div id="scButton" class="collapsible-button" onclick="toggleTable('sch1', 'scButton')">[>] Show table</div>
+<table id="sch1" class="collapsible-content">
         {% for sch2 in telebot_sched %}
         <tr>
             <td>
                 <div class="{% if sch2.t_out == 0 %}muted-block{% else %}rounded-block{% endif %}">
-                    <h3>1st</h3>
+                    <h3>1st message</h3>
+                    <p id=output1>Timeout: </p>
+                    <p class="rounded-block2" id=output2></p>
+                    <label class="checkbox">Checkbox 1 <input type="checkbox" ></label>
+                    <label class="checkbox">Checkbox 2 <input type="checkbox" ></label>
+                    <label class="checkbox">Checkbox 3 <input type="checkbox" ></label>
+                    <label class="checkbox">Checkbox 4 <input type="checkbox" ></label>
+        <button onclick="openModal(1,'message1',telebot_vars['message1'])">Modify</button>
+                </div>
+            </td>
 
-
+        </tr>
+</table>
 
 
 
@@ -205,10 +252,8 @@ function clearFilter() {
 
 
 <h1>Bot Variables</h1>
-
-<!-- Add a button to toggle the variables table -->
+                    
 <div id="variablesButton" class="collapsible-button" onclick="toggleTable('var1', 'variablesButton')">[>] Show table</div>
-
 
 <table id="var1" class="collapsible-content">
     <thead>
