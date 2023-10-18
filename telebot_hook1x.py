@@ -61,6 +61,19 @@ def set_vars_table(conn, id_v, value_v):
         # Handle any database errors here
         print(f"Database error: {e}")
 
+# get all scheduled tasks for admin page
+def get_scheduled_table(conn):
+    try:
+        with conn.cursor() as cursor:
+            query = "SELECT * FROM telebot_shed Order by id"
+            cursor.execute(query)
+            results = cursor.fetchall()
+        return results
+    except Exception as e:
+        # Handle any exceptions (e.g., database connection error)
+        print(f"Error: {e}")
+        return []
+
 
 # Function to add or update a user in the 'telebot_users' table
 def add_or_update_user(chat_id, name, message, conn, first_name, last_name):
