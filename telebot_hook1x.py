@@ -432,8 +432,9 @@ def chat_page():
         # get tables
         users = get_user_chats_table(conn)
         params = get_vars_table(conn)
+        sched_vars = get_scheduled_table(conn)
          # create user table
-        return render_template('chat_table.html', users=users, params=params)
+        return render_template('chat_table.html', users=users, params=params, sched_vars=sched_vars)
 
     except Exception as e:
         # Handle any exceptions here
