@@ -78,6 +78,17 @@ INSERT INTO `telebot_vars` VALUES (1,'imgtosend','Asya-B-aa250.jpg'),(2,'pdftose
 /*!40000 ALTER TABLE `telebot_vars` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+CREATE TABLE `telebot_sched` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `t_out` smallint NULL default 0,  
+  `simg` varchar(100),
+  `message` varchar(3800),
+  `ukeys` varchar(10),  
+  PRIMARY KEY (`id`)
+);
+
+
 -- Dump completed 
 '''
 
