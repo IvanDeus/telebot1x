@@ -87,7 +87,7 @@ CREATE TABLE `telebot_sched` (
   `ukeys` varchar(10),  
   PRIMARY KEY (`id`)
 );
-
+insert into telebot_sched set t_out='24' , simg='mini_sin.jpg';
 
 -- Dump completed 
 '''
