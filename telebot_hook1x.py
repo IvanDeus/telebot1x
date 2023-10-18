@@ -75,7 +75,7 @@ def get_scheduled_table(conn):
         return []
 
 # set schedule for admin page
-def set_scheduled_table(conn, id_v, t_out, sing, message, ukeys):
+def set_scheduled_table(conn, id_v, t_out, simg, message, ukeys):
     try:
         with conn.cursor() as cursor:
             query = "Update telebot_sched set t_out = %s, simg = %s, message = %s, ukeys = %s Where id = %s "
