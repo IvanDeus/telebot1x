@@ -418,7 +418,11 @@ def login_chat():
         else:
             return "Invalid admin credentials. Please try again."
 
-    return render_template('login_chat.html')
+    # Create a response
+    response = make_response(render_template('login_chat.html'))
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['Cache-Control'] = 'no-cache'
+    return response
 
 
 @app.route('/chat_page', methods=['GET'])
@@ -438,7 +442,10 @@ def chat_page():
         params = get_vars_table(conn)
         sched_vars = get_scheduled_table(conn)
          # create user table
-        return render_template('chat_table.html', users=users, params=params, sched_vars=sched_vars)
+        response = make_response(render_template('chat_table.html', users=users, params=params, sched_vars=sched_vars))
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['Cache-Control'] = 'no-cache'
+        return response
 
     except Exception as e:
         # Handle any exceptions here
