@@ -385,8 +385,12 @@ def handle_callback(call, conn, manager_chat_id, telebot_vars):
 # Telegram bot
 @app.route('/')
 def hello():
-    return render_template('hello.html')
-
+    # Create a response
+    response = make_response(render_template('hello.html'))
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    ##response.headers['Server'] = 'server.name'
+    response.headers['Cache-Control'] = 'no-cache'
+    return response
 
 # chat login route
 @app.route('/admin-chat', methods=['GET', 'POST'])
