@@ -83,16 +83,15 @@
   height: 40px;
   cursor: pointer;
   background-color: #ff0000; /* Red background for "X" button */
-  color: #fff; /* White text color */
+  color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%; /* Makes it round */
-  font-size: 24px; /* Adjust font size as needed */
+  font-size: 24px;
 }
 
 
-        /* Collapsible button style */
         .collapsible-button {
             cursor: pointer;
         }
@@ -100,7 +99,6 @@
         .collapsible-content {
             display: none;
         }
-
 
 
         /* Define styles for the rounded block */
@@ -128,10 +126,6 @@
             background-color: #f5f5ff;
             overflow: auto;
         }
-        /* Add styles for checkboxes */
-        .checkbox {
-            display: block;
-        }
 
 
     </style>
@@ -139,33 +133,88 @@
 
 <body>
 <h1>Bot Scheduler</h1>
-<div id="scButton" class="collapsible-button" onclick="toggleTable('sch1', 'scButton')">[>] Show table</div>
+<div id="sc1Button" class="collapsible-button" onclick="toggleTable('sch1', 'sc1Button')">[>] Show table</div>
+
 <table id="sch1" class="collapsible-content">
-    {% for sch2 in sched_vars %}
+    {% for sch1 in sched1 %}
         {% if loop.index0 % 4 == 0 %}
             <tr>
         {% endif %}
         <td>
-            <div class="{% if sch2[2] == 0 %}muted-block{% else %}rounded-block{% endif %}">
-                <h3>Message #{{ sch2[0] }}</h3>
-                <p id="output1">Timeout: {{ sch2[1] }}</p>
-                <p>Image to send: {{ sch2[2] }}</p>
-                <p class="rounded-block2" id="output2">{{ sch2[3] }}</p>
-                <label class="checkbox">Help button<input type="checkbox"></label>
-                <label class="checkbox">Manager button<input type="checkbox"></label>
-                <label class="checkbox">Sub button<input type="checkbox"></label>
-                <label class="checkbox">Unsub button<input type="checkbox"></label>
-                <button onclick="openModal(1, 'message1', sch2[3])">Modify</button>
-            </div>
-        </td>
+            <div class="{% if sch1[2] == 0 %}muted-block{% else %}rounded-block{% endif %}">
+                <h3>Message #{{ sch1[0] }} &nbsp; Timeout: {{ sch1[1] }}h.</h3>
+                <p>     Image to send: {{ sch1[2] }}</p>
+                <p class="rounded-block2" id="sch1im">{{ sch1[3] }}</p>
+                <p>User keys:  {{ sch1[4] }}</p>
+                <button onclick="openModalSch1({{ sch1[0] }}, `{{ sch1[3] }}`, {{ sch1[1] }}, '{{ sch1[2] }}', '{{ sch1[4] }}')"> Modify </button>
+            </div></td>
         {% if loop.index0 % 4 == 3 %}
             </tr>
         {% endif %}
     {% endfor %}
 </table>
 
+<div id="modalSch1" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeSch1Modal()">&times;</span>
+        <h2 class="infomessage5" id="modalSch1Title">Modify Message</h2>
+        <form method="POST" action="/change-event">
+           <p>
+                <label for="modalSch1Timeout">Timeout:</label>
+                <input type="text" name="t_out" id="modalSch1Timeout"> &nbsp;
+                <label for="modalSch1Image">Image to Send:</label>
+                <input type="text" name="image" id="modalSch1Image">
+            </p>
+        <input type="hidden" name="id_v" id="modalSch1Id">
+                <input type="hidden" name="ev_id" id="ev_idm" value=1>
+                <input type="hidden" name="event_date" id="event_datem" value="2023-10-20">
+            <p>
+                <label for="modalSch1Value">Message:</label><br>
+                <textarea name="fieldm" cols="80" rows="30" required id="modalSch1Value"></textarea>
+            </p>
+            <p><label for="ukeys1">User keys:</label>
+        <input type="text" name="ukeys" id="ukeys1"></p>
+            <br><input type="submit" value=" Change ">
+        </form>
+    </div>
+</div>
+<script>
 
+function openModalSch1(messageId, messageValue, timeout, image, ukeys) {
+    var modal = document.getElementById("modalSch1");
+    var modalTitle = document.getElementById("modalSch1Title");
+    var modalIdField = document.getElementById("modalSch1Id");
+    var modalValueField = document.getElementById("modalSch1Value");
+    var modalTimeoutField = document.getElementById("modalSch1Timeout");
+    var modalImageField = document.getElementById("modalSch1Image");
+    var modalUkeysField = document.getElementById("ukeys1");
+    modalTitle.textContent = "Modify Message #" + messageId;
+    modalIdField.value = messageId;
+    modalValueField.value = messageValue;
+    modalTimeoutField.value = timeout;
+    modalImageField.value = image;
+    modalUkeysField.value = ukeys;
+    modal.style.display = "block";
+}
 
+function closeSch1Modal() {
+    var modal = document.getElementById("modalSch1");
+    modal.style.display = "none";
+}
+function toggleTable(tableId, buttonId) {
+    var table = document.getElementById(tableId);
+    var button = document.getElementById(buttonId);
+
+    if (table.style.display === "none" || table.style.display === "") {
+        table.style.display = "table";
+        button.textContent = "[ v ] Hide table";
+    } else {
+        table.style.display = "none";
+        button.textContent = "[>] Show table";
+    }
+}
+
+</script>
 <h1>Bot Chat Table</h1>
 
 <!-- Add a button to toggle the chat table -->
@@ -205,20 +254,6 @@
 </table>
 
 <script>
-
-function toggleTable(tableId, buttonId) {
-    var table = document.getElementById(tableId);
-    var button = document.getElementById(buttonId);
-
-    if (table.style.display === "none" || table.style.display === "") {
-        table.style.display = "table";
-        button.textContent = "[ v ] Hide table";
-    } else {
-        table.style.display = "none";
-        button.textContent = "[>] Show table";
-    }
-}
-
 
 function filterTable() {
     var input, filter, table, tr, td, i, txtValue;
@@ -288,14 +323,13 @@ function clearFilter() {
     <!-- allow admin to change variables -->
     <form method="POST" action="/change-v">
         <input type="hidden" name="id_v" id="paramId">
-        <textarea name="field" cols="80" rows="40" required id="paramValue"></textarea>
+        <textarea name="field" cols="80" rows="30" required id="paramValue"></textarea>
         <br><input type="submit" value=" Change ">
     </form>
   </div>
 </div>
 
 <script>
-
 
 function openModal(paramId, paramParam, paramValue) {
     var modal = document.getElementById("myModal");
@@ -316,7 +350,5 @@ function closeModal() {
     modal.style.display = "none";
 }
 </script>
-
 </body>
-
 </html>
