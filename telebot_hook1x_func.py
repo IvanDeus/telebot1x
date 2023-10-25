@@ -103,3 +103,59 @@ def set_scheduled_table(conn, id_v, t_out, simg, message, ukeys):
         # Handle any database errors here
         print(f"Database error: {e}")
 
+# change subscription status 
+def change_sub_status(chat_id, conn, sub):
+    try:
+        with conn.cursor() as cursor:
+            # Use parameterized query to update the subscription status
+            query = "UPDATE telebot_users SET Sub = %s WHERE chat_id = %s"
+            cursor.execute(query, (sub, chat_id))
+            # Commit the changes to the database
+            conn.commit()
+
+    except pymysql.Error as e:
+        # Handle any database errors here
+        print(f"Database error: {e}")
+
+# Function to find all subscribed chat IDs
+def find_subbed_chatids(conn):
+    try:
+        with conn.cursor() as cursor:
+            query = "SELECT chat_id FROM telebot_users WHERE Sub = 1"
+            cursor.execute(query)
+            results = cursor.fetchall()  # Fetch all matching chat IDs
+            if results:
+                return [result[0] for result in results]  # Return a list of chat IDs
+            else:
+                return []  # Return an empty list if no subscribed users found
+    except Exception as e:
+        # Handle any exceptions (e.g., database connection error)
+        print(f"Error: {e}")
+        return []
+
+def change_step_status(chat_id, conn, stp):
+    try:
+        with conn.cursor() as cursor:
+            # Use parameterized query to update the subscription status
+            query = "UPDATE telebot_users SET step = %s WHERE chat_id = %s"
+            cursor.execute(query, (stp, chat_id))
+            # Commit the changes to the database
+            conn.commit()
+    except pymysql.Error as e:
+        # Handle any database errors here
+        print(f"Database error: {e}")
+
+def get_manager_chat_id(conn):
+    try:
+        with conn.cursor() as cursor:
+            query = "SELECT chat_id FROM telebot_admins WHERE chatmngr = 1 LIMIT 1"
+            cursor.execute(query)
+            result = cursor.fetchone()
+            if result:
+                return result[0]  # Return the chat_id if found
+            else:
+                return None  # Return None if admin user not found
+    except Exception as e:
+        # Handle any exceptions (e.g., database connection error)
+        print(f"Error: {e}")
+        return None
