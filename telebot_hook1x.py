@@ -90,40 +90,6 @@ def handle_stat24_command(chat_id, conn):
       # Send the message to the Telegram bot
     bot.send_message(chat_id, message_lastu)
 
-def update_chat_table(conn, uchat_id, mngmsg):
-    try:
-        with conn.cursor() as cursor:
-            mngmsg = conn.escape_string(mngmsg)
-             # Check if the user already exists in the table
-            query = f"SELECT id FROM telebot_chats WHERE uchat_id = '{uchat_id}' ORDER BY lastupd DESC LIMIT 1"
-            cursor.execute(query)
-            result_id = cursor.fetchone()
-              # Proceed to update
-            if result_id:
-               mngmsg = " : "+mngmsg
-             # User exists, update the record
-               update_query = "UPDATE telebot_chats SET mngmsg = CONCAT(mngmsg, %s) WHERE id = %s"
-               cursor.execute(update_query, (mngmsg, result_id[0]))
-               conn.commit()
-            else:
-               print("no chat was found by manager")
-
-    except pymysql.Error as e:
-        # Handle any database errors here
-        print(f"Database error: {e}")
-
-def insert_into_chat_table(conn, uchat_id, mngchat_id, umsg, mngmsg):
-    try:
-        with conn.cursor() as cursor:
-            # Use parameterized query to update the subscription status
-            query = "Insert Into telebot_chats SET uchat_id = %s, mngchat_id = %s, umsg = %s, mngmsg = %s"
-            cursor.execute(query, (uchat_id, mngchat_id, umsg, mngmsg))
-            # Commit the changes to the database
-            conn.commit()
-    except pymysql.Error as e:
-        # Handle any database errors here
-        print(f"Database error: {e}")
-
 # Function to retrieve admin chat ID and hashed password from the database
 def find_admin_chatid_and_password(conn, username):
     cursor = conn.cursor()
