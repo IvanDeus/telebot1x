@@ -61,19 +61,6 @@ def get_last_24_users(conn):
 
     return users
 
-def change_sub_status(chat_id, conn, sub):
-    try:
-        with conn.cursor() as cursor:
-            # Use parameterized query to update the subscription status
-            query = "UPDATE telebot_users SET Sub = %s WHERE chat_id = %s"
-            cursor.execute(query, (sub, chat_id))
-            # Commit the changes to the database
-            conn.commit()
-
-    except pymysql.Error as e:
-        # Handle any database errors here
-        print(f"Database error: {e}")
-
 # Function to handle the '/stat24' command
 def handle_stat24_command(chat_id, conn):
     message_lastu = ''
@@ -102,37 +89,6 @@ def handle_stat24_command(chat_id, conn):
             message_lastu += "\n"
       # Send the message to the Telegram bot
     bot.send_message(chat_id, message_lastu)
-
-
-# Function to find all subscribed chat IDs
-def find_subbed_chatids(conn):
-    try:
-        with conn.cursor() as cursor:
-            query = "SELECT chat_id FROM telebot_users WHERE Sub = 1"
-            cursor.execute(query)
-            results = cursor.fetchall()  # Fetch all matching chat IDs
-            if results:
-                return [result[0] for result in results]  # Return a list of chat IDs
-            else:
-                return []  # Return an empty list if no subscribed users found
-    except Exception as e:
-        # Handle any exceptions (e.g., database connection error)
-        print(f"Error: {e}")
-        return []
-
-
-
-def change_step_status(chat_id, conn, stp):
-    try:
-        with conn.cursor() as cursor:
-            # Use parameterized query to update the subscription status
-            query = "UPDATE telebot_users SET step = %s WHERE chat_id = %s"
-            cursor.execute(query, (stp, chat_id))
-            # Commit the changes to the database
-            conn.commit()
-    except pymysql.Error as e:
-        # Handle any database errors here
-        print(f"Database error: {e}")
 
 def update_chat_table(conn, uchat_id, mngmsg):
     try:
@@ -215,21 +171,6 @@ def find_if_any_user_needs_mngr(conn):
     try:
         with conn.cursor() as cursor:
             query = "SELECT id FROM telebot_users WHERE step = 101 LIMIT 1"
-            cursor.execute(query)
-            result = cursor.fetchone()
-            if result:
-                return result[0]  # Return the chat_id if found
-            else:
-                return None  # Return None if admin user not found
-    except Exception as e:
-        # Handle any exceptions (e.g., database connection error)
-        print(f"Error: {e}")
-        return None
-
-def get_manager_chat_id(conn):
-    try:
-        with conn.cursor() as cursor:
-            query = "SELECT chat_id FROM telebot_admins WHERE chatmngr = 1 LIMIT 1"
             cursor.execute(query)
             result = cursor.fetchone()
             if result:
@@ -384,7 +325,6 @@ def chat_page():
     # Close the database connection
     conn.close()
 
-
 # Define the route and function for adding a user
 @app.route('/change-v', methods=['POST'])
 def change_v():
@@ -439,7 +379,6 @@ def change_s():
         # Handle any exceptions here
         print(f"Error: {e}")
         return "An error occurred."
-
 
 
 
