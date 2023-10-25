@@ -1,3 +1,4 @@
+cat telebot_hook1x.py
 ## telegram bot
 from flask import Flask, request, jsonify, render_template, redirect, url_for, make_response, abort
 import json
@@ -151,7 +152,7 @@ def find_if_any_user_needs_mngr(conn):
 # telebot hadle user input
 def handle_nostart(message, telebot_vars):
     chat_id = message.chat.id
-    msg1 = telebot_vars['msg1'] 
+    msg1 = telebot_vars['msg1']
     # Create an inline keyboard
     keyboard = types.InlineKeyboardMarkup()
     button2 = types.InlineKeyboardButton('Help', callback_data='/help')
@@ -162,7 +163,7 @@ def handle_start(message, telebot_vars):
     chat_id = message.chat.id
 
     imgtosend = telebot_vars['imgtosend']
-    msg2 = telebot_vars['msg2'] 
+    msg2 = telebot_vars['msg2']
     # Create an inline keyboard
     keyboard = types.InlineKeyboardMarkup()
     button1 = types.InlineKeyboardButton('Guide', callback_data='/guide')
@@ -190,7 +191,7 @@ def handle_callback(call, conn, manager_chat_id, telebot_vars):
     data = call.data
     user_name = call.message.chat.username
     msg3 = telebot_vars['msg3']
-    msg4 = telebot_vars['msg4'] 
+    msg4 = telebot_vars['msg4']
 
     if data == '/guide':
          # Handle the /guide command to send a PDF file
@@ -261,7 +262,6 @@ def login_chat():
     response.headers['Cache-Control'] = 'no-cache'
     return response
 
-
 @app.route('/chat_page', methods=['GET'])
 def chat_page():
     # Check if the admin_cookie_id is set
@@ -277,9 +277,9 @@ def chat_page():
         # get tables
         users = get_user_chats_table(conn)
         params = get_vars_table(conn)
-        sched_vars = get_scheduled_table(conn)
+        sched1 = get_scheduled_table(conn, 1)
          # create user table
-        response = make_response(render_template('chat_table.html', users=users, params=params, sched_vars=sched_vars))
+        response = make_response(render_template('chat_table.html', users=users, params=params, sched1=sched1))
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['Cache-Control'] = 'no-cache'
         return response
@@ -307,7 +307,7 @@ def change_v():
        # Get chat_id and name from the form data
        id_v = request.form['id_v']
        value_v = request.form['field']
-       # set variables 
+       # set variables
        set_vars_table(conn, id_v, value_v)
        conn.close()
        # Redirect to the admin page
@@ -317,27 +317,24 @@ def change_v():
         print(f"Error: {e}")
         return "An error occurred."
 
-@app.route('/change-s', methods=['POST'])
-def change_s():
-    # Check if the admin_cookie_id is set
-    chat_cookie_id = request.cookies.get('chat_cookie_id')
-    chat_cookie_name = request.cookies.get('chat_cookie_name')
-    # Create a database connection with Unix socket
+# change scheduled events
+@app.route('/change-event', methods=['POST'])
+def change_event():
+    admin_cookie_id = request.cookies.get('chat_cookie_id')
+    admin_cookie_name = request.cookies.get('chat_cookie_name')
     conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
-    # get admin chat id from cookie name
-    admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn,chat_cookie_name)
-    if chat_cookie_id != f'{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
+    admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn, admin_cookie_name)
+    if admin_cookie_id != f'{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
         abort(403)  # Return a forbidden error if the cookie is not set
     try:
-       # Get  data
        id_v = request.form['id_v']
+       event_date = request.form['event_date']
        t_out = request.form['t_out']
-       simg = request.form['simg']
-       message = request.form['message']
+       simg = request.form['image']
+       message = request.form['fieldm']
        ukeys = request.form['ukeys']
-
-       # set scheduler
-       set_scheduled_table(conn, id_v, t_out, simg, message, ukeys)
+       ev_id = request.form['ev_id']
+       set_scheduled_table(conn, id_v, t_out, simg, message, ukeys, event_date, ev_id)
        conn.close()
        # Redirect to the admin page
        return redirect('/chat_page')
@@ -345,8 +342,6 @@ def change_s():
         # Handle any exceptions here
         print(f"Error: {e}")
         return "An error occurred."
-
-
 
 # Main logic
 @app.route('/telebot-hook1x', methods=['POST'])
