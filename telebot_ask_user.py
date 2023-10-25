@@ -7,9 +7,8 @@ import time
 import telebot
 from telebot import types
 # Config import
-from singirella_cfg import bot_token, db_host, db_username, db_password, db_name, mysql_unix_socket
-from singirella_func import fetch_telebot_vars_into_dict, get_scheduled_table, find_stepx_chatids, change_step_status, get_users_to_notify
-from singirella_hand import inline_button_constructor, send_notification
+from telebot_hook1x_cfg import bot_token, db_host, db_username, db_password, db_name, mysql_unix_socket
+from telebot_hook1x_func import *
 # my path
 import os
 script_directory = os.path.dirname(os.path.abspath(__file__))
