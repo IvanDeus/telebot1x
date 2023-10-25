@@ -27,7 +27,7 @@ for idx, event in enumerate(sched_events):
     is_last_event = idx == len(sched_events) - 1
     for user in users_to_notify:
         chat_id = user[0]
-        photo_path = script_directory + '/singirella-files/' + img
+        photo_path = script_directory + '/telebot-h-files/' + img
         message1 = message
         send_notification(bot, chat_id, photo_path, message1, ukeys)
         change_step_status(chat_id, conn, event_id + 1)
