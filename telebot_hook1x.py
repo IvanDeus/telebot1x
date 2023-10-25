@@ -1,5 +1,4 @@
-cat telebot_hook1x.py
-## telegram bot
+## telegram bot by Ivan Deus
 from flask import Flask, request, jsonify, render_template, redirect, url_for, make_response, abort
 import json
 import requests
