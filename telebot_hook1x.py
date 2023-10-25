@@ -7,7 +7,7 @@ import time
 from passlib.hash import pbkdf2_sha256
 import telebot
 from telebot import types
-
+from telebot_hook1x_func import *
 app = Flask(__name__)
 # Config import
 from telebot_hook1x_cfg import bot_token, admin_name, db_host, db_username, db_password, db_name, mysql_unix_socket
@@ -16,76 +16,6 @@ from telebot_hook1x_cfg import bot_token, admin_name, db_host, db_username, db_p
 bot = telebot.TeleBot(bot_token)
 
 # ... Code begins
-# fetch all config vars defined in mysql
-def fetch_telebot_vars_into_dict(conn):
-    try:
-        with conn.cursor() as cursor:
-            query = "SELECT param, value FROM telebot_vars"
-            cursor.execute(query)
-            result = cursor.fetchall()
-
-            telebot_vars = {}  # Initialize an empty dictionary
-
-            for row in result:
-                param, value = row
-                telebot_vars[param] = value  # Add data to the dictionary
-
-            return telebot_vars
-
-    except pymysql.Error as e:
-        # Handle any database errors here
-        print(f"Database error: {e}")
-        return {}
-
-# get all variables for admin page
-def get_vars_table(conn):
-    try:
-        with conn.cursor() as cursor:
-            query = "SELECT * FROM telebot_vars Order by param"
-            cursor.execute(query)
-            results = cursor.fetchall()
-        return results
-    except Exception as e:
-        # Handle any exceptions (e.g., database connection error)
-        print(f"Error: {e}")
-        return []
-
-# set variables for admin page
-def set_vars_table(conn, id_v, value_v):
-    try:
-        with conn.cursor() as cursor:
-            query = "Update telebot_vars set value = %s Where id = %s "
-            cursor.execute(query, (value_v, id_v))
-            conn.commit()
-    except pymysql.Error as e:
-        # Handle any database errors here
-        print(f"Database error: {e}")
-
-# get all scheduled tasks for admin page
-def get_scheduled_table(conn):
-    try:
-        with conn.cursor() as cursor:
-            query = "SELECT * FROM telebot_sched Order by id"
-            cursor.execute(query)
-            results = cursor.fetchall()
-        return results
-    except Exception as e:
-        # Handle any exceptions (e.g., database connection error)
-        print(f"Error: {e}")
-        return []
-
-# set schedule for admin page
-def set_scheduled_table(conn, id_v, t_out, simg, message, ukeys):
-    try:
-        with conn.cursor() as cursor:
-            query = "Update telebot_sched set t_out = %s, simg = %s, message = %s, ukeys = %s Where id = %s "
-            cursor.execute(query, (t_out, simg, messenge, ukeys, id_v))
-            conn.commit()
-    except pymysql.Error as e:
-        # Handle any database errors here
-        print(f"Database error: {e}")
-
-
 # Function to add or update a user in the 'telebot_users' table
 def add_or_update_user(chat_id, name, message, conn, first_name, last_name):
     try:
