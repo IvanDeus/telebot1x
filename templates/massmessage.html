@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mass Message Results</title>
+</head>
+<body>
+    <h1>Mass Message Results</h1>
+    
+    <h2>Sent Messages:</h2>
+    <ul>
+        {% for message in sent_messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    
+    <h2>Error Messages:</h2>
+    <ul>
+        {% for error_message in error_messages %}
+            <li>{{ error_message }}</li>
+        {% endfor %}
+    </ul>
+    
+    <form action="/chat_page" method="get">
+        <button type="submit">Return to Chat Page</button>
+    </form>
+</body>
+</html>

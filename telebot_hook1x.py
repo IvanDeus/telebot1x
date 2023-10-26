@@ -290,6 +290,33 @@ def chat_page():
     # Close the database connection
     conn.close()
 
+@app.route('/telebot1xmassmessage', methods=['POST'])
+def telebot1xmassmessage():
+    # Check if the admin_cookie_id is set
+    chat_cookie_id = request.cookies.get('chat_cookie_id')
+    chat_cookie_name = request.cookies.get('chat_cookie_name')
+    # Create a database connection with Unix socket
+    conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
+    # get admin chat id from cookie name
+    admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn,chat_cookie_name)
+    if chat_cookie_id != f'{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
+        abort(403)  # Return a forbidden error if the cookie is not set
+    try:
+       bot = telebot.TeleBot(bot_token)
+       message = request.form['message']
+       sent_messages, error_messages = massmessage(conn, message, bot)
+       conn.close()
+       # Create a response
+       response = make_response(render_template('massmessage.html', sent_messages = sent_messages, error_messages = error_messages))
+       response.headers['X-Content-Type-Options'] = 'nosniff'
+       response.headers['Cache-Control'] = 'no-cache'
+       return response
+
+    except Exception as e:
+        # Handle any exceptions here
+        print(f"Error: {e}")
+        return "An error occurred."
+
 # Define the route and function for adding a user
 @app.route('/change-v', methods=['POST'])
 def change_v():

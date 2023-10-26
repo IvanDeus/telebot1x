@@ -126,7 +126,17 @@
             background-color: #f5f5ff;
             overflow: auto;
         }
-
+    
+#massMessageButton {
+        background-color: red;
+        color: white;
+        text-align: center;
+        display: block;
+        margin: 0 auto;
+        padding: 10px 20px; /* Adjust padding as needed */
+        border: none;
+        cursor: pointer;
+    }
 
     </style>
 </head>
@@ -332,33 +342,57 @@ function clearFilter() {
 </table>
 
 <div id="myModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <p id="modalContent">"paramValue"</p>
-    <!-- allow admin to change variables -->
-    <form method="POST" action="/change-v">
-        <input type="hidden" name="id_v" id="paramId">
-    <textarea title="afldx" name="field" cols="80" rows="30" required id="paramValue"></textarea>
-        <br><input type="submit" value=" Change ">
-    </form>
-  </div>
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <p id="modalContent">"paramValue"</p>
+        <!-- Allow admin to change variables -->
+        <form method="POST" action="/change-v">
+            <input type="hidden" name="id_v" id="paramId">
+            <textarea title="afldx" name="field" cols="80" rows="30" required id="paramValue"></textarea>
+            <br>
+            <input type="submit" value="Change">
+        </form>
+	<p>
+        <!-- Add Mass Message button conditionally -->
+        <form method="POST" action="/telebot1xmassmessage" id="massMessageForm" style="display: none;">
+            <input type="hidden" name="message" id="massMessageInput">
+        </form>
+        <button id="massMessageButton" onclick="triggerMassMessage()" style="display: none;">Mass Message!</button>
+	</p>  </div>
 </div>
 
 <script>
-
 function openModal(paramId, paramParam, paramValue) {
     var modal = document.getElementById("myModal");
     var modalContent = document.getElementById("modalContent");
     var paramIdField = document.getElementById("paramId");
     var paramValueField = document.getElementById("paramValue");
+    var massMessageForm = document.getElementById("massMessageForm");
+    var massMessageInput = document.getElementById("massMessageInput");
+    var massMessageButton = document.getElementById("massMessageButton");
 
     // Set the modal content and input values based on the parameters
     modalContent.innerHTML = paramParam;
     paramIdField.value = paramId;
     paramValueField.value = paramValue;
+
+    // Show or hide Mass Message button based on paramParam
+    if (paramParam === "massmessage1") {
+        massMessageForm.style.display = "block";
+        massMessageInput.value = paramValue;
+        massMessageButton.style.display = "block";
+    } else {
+        massMessageForm.style.display = "none";
+        massMessageButton.style.display = "none";
+    }
+
     modal.style.display = "block";
 }
 
+function triggerMassMessage() {
+    var massMessageForm = document.getElementById("massMessageForm");
+    massMessageForm.submit();
+}
 
 function closeModal() {
     var modal = document.getElementById("myModal");
