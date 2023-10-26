@@ -11,7 +11,26 @@ require 'telebot-hook1x-cfg.php';
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
+// get configuration into array    
+function fetchTelebotVarsIntoArray($conn) {
+    try {
+        $query = "SELECT param, value FROM telebot_vars";
+        $result = $conn->query($query);
+        
+        $telebotVars = []; // Initialize an empty array
 
+        while ($row = $result->fetch_assoc()) {
+            $param = $row['param'];
+            $value = $row['value'];
+            $telebotVars[$param] = $value; // Add data to the array
+        }
+
+        return $telebotVars;
+    } catch (Exception $e) {
+        // Handle any exceptions, e.g., database connection error
+        return [];
+    }
+}
 // Function to add or update a user in the 'telebot_users' table
 function addOrUpdateUser($chat_id, $name, $message, $conn) {
 
@@ -71,10 +90,11 @@ function getLast24Users($conn) {
 }
 
 // Function to handle incoming Telegram updates
-function handle_telegram_update($update_data,$bot_token) {
-// call for global vars
-Global $imgtosend;
-Global $pdftosend;
+function handle_telegram_update($update_data,$bot_token,$conn) {
+	// call for vars
+$telebotVars = fetchTelebotVarsIntoArray($conn);
+$imgtosend  = $telebotVars['imgtosend'];
+$pdftosend = $telebotVars['pdftosend'];
     if (isset($update_data['message'])) {
         $chat_id = $update_data['message']['chat']['id'];
         $message_text = $update_data['message']['text'];
@@ -240,7 +260,7 @@ if ($update_data) {
 		send_telegram_message($chat_id, $message_lastu, $bot_token);		
 
 } else {
-		handle_telegram_update($update_data, $bot_token);}
+		handle_telegram_update($update_data, $bot_token, $conn);}
 } else {
 header("HTTP/1.1 400 Bad Request");
 echo "Bad Request";
