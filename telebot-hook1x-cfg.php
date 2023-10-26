@@ -9,4 +9,5 @@
     $admin_name='ivan';
  // Replace with your Telegram bot token
     $bot_token = 'xxx:xxx';
+// end
 ?>
