@@ -204,3 +204,18 @@ def insert_into_chat_table(conn, uchat_id, mngchat_id, umsg, mngmsg):
     except pymysql.Error as e:
         # Handle any database errors here
         print(f"Database error: {e}")
+        
+# set the number of messages in a scheduler
+def update_sched_message_nmbr(connection, x, y):
+    try:
+        with connection.cursor() as cursor:
+          # Update rows where id is greater than x and less than or equal to y
+            update_sql = "UPDATE telebot_sched SET ev_id = 99 WHERE id > %s AND id <= %s"
+            cursor.execute(update_sql, (x, y))
+        # Update rows where id is less than or equal to x
+            update_sql = "UPDATE telebot_sched SET ev_id = 1 WHERE id <= %s"
+            cursor.execute(update_sql, x)
+            connection.commit()
+    except pymysql.Error as e:
+        # Handle any database errors here
+        print(f"Database error: {e}")
