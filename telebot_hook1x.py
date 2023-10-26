@@ -342,6 +342,27 @@ def change_event():
         print(f"Error: {e}")
         return "An error occurred."
 
+###set the number of messages in a scheduler
+@app.route('/change-schnum', methods=['GET'])
+def change_schnum():
+    admin_cookie_id = request.cookies.get('chat_cookie_id')
+    admin_cookie_name = request.cookies.get('chat_cookie_name')
+    conn = pymysql.connect(unix_socket=mysql_unix_socket, user=db_username, password=db_password, database=db_name)
+    admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn, admin_cookie_name)
+    if admin_cookie_id != f'{admin_chatid}cookie_chat_passed_tst1212':  # cookie check
+        abort(403)  # Return a forbidden error if the cookie is not set
+    try:
+        msglast = int(request.args.get('msglast'))
+        msgcount = int(request.args.get('msgcount'))
+        update_sched_message_nmbr(conn, msgcount, msglast)
+        conn.close()
+        return redirect('/chat_page')
+    except Exception as e:
+        # Handle any exceptions here
+        print(f"Error: {e}")
+        return "An error occurred."
+
+
 # Main logic
 @app.route('/telebot-hook1x', methods=['POST'])
 def telebothook1x():
