@@ -141,18 +141,33 @@
             <tr>
         {% endif %}
         <td>
-            <div class="{% if sch1[2] == 0 %}muted-block{% else %}rounded-block{% endif %}">
+            <div class="rounded-block">
                 <h3>Message #{{ sch1[0] }} &nbsp; Timeout: {{ sch1[1] }}h.</h3>
                 <p>     Image to send: {{ sch1[2] }}</p>
                 <p class="rounded-block2" id="sch1im">{{ sch1[3] }}</p>
                 <p>User keys:  {{ sch1[4] }}</p>
                 <button onclick="openModalSch1({{ sch1[0] }}, `{{ sch1[3] }}`, {{ sch1[1] }}, '{{ sch1[2] }}', '{{ sch1[4] }}')"> Modify </button>
+                <script> var sch1IDValue = {{ sch1[0] }}; </script>
             </div></td>
         {% if loop.index0 % 4 == 3 %}
             </tr>
         {% endif %}
     {% endfor %}
+    <tr><td>
+<h3> &nbsp; <label for="messageCount">Number of messages: </label>
+<select name="msgcnt" id="messageCount" onchange="window.location.href='/change-schnum?msglast=8&msgcount='+this.value;">
+    <option value="2"> 2 </option>
+    <option value="3"> 3 </option>
+    <option value="4"> 4 </option>
+    <option value="5"> 5 </option>
+    <option value="6"> 6 </option>
+    <option value="7"> 7 </option>
+    <option value="8"> 8 </option>
+</select>
+</h3>
+            </td></tr>
 </table>
+<script>document.getElementById("messageCount").value = sch1IDValue;</script>
 
 <div id="modalSch1" class="modal" style="display: none;">
     <div class="modal-content">
@@ -323,7 +338,7 @@ function clearFilter() {
     <!-- allow admin to change variables -->
     <form method="POST" action="/change-v">
         <input type="hidden" name="id_v" id="paramId">
-        <textarea name="field" cols="80" rows="30" required id="paramValue"></textarea>
+    <textarea title="afldx" name="field" cols="80" rows="30" required id="paramValue"></textarea>
         <br><input type="submit" value=" Change ">
     </form>
   </div>
