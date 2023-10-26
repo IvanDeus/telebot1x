@@ -26,8 +26,7 @@ function addOrUpdateUser($chat_id, $name, $message, $conn) {
 
     if ($result->num_rows > 0) {
         // User exists, update the record
-        $current_time = date('Y-m-d H:i:s');
-        $query = "UPDATE telebot_users SET lastupd = '$current_time', lastmsg = '$message' WHERE chat_id = '$chat_id'";
+        $query = "UPDATE telebot_users SET lastmsg = '$message' WHERE chat_id = '$chat_id'";
         if ($conn->query($query) === TRUE) {
             // Successfully updated the user
         } else {
@@ -36,8 +35,7 @@ function addOrUpdateUser($chat_id, $name, $message, $conn) {
         }
     } else {
         // User does not exist, insert a new record
-        $current_time = date('Y-m-d H:i:s');
-        $query = "INSERT INTO telebot_users (chat_id, name, lastupd, lastmsg) VALUES ('$chat_id', '$name', '$current_time', '$message')";
+        $query = "INSERT INTO telebot_users (chat_id, name, lastmsg) VALUES ('$chat_id', '$name', '$message')";
         if ($conn->query($query) === TRUE) {
             // Successfully inserted the new user
         } else {
