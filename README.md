@@ -8,8 +8,8 @@ The minimum system requirements for this bot are as follows: PHP version 5.3.10,
 Installation Steps:
 
 1. Begin by creating a Telegram bot using the @botfather and obtain the bot token.
-2. Create the necessary MySQL table by copying the command from the telebot-hook1x-cfg.php file.
-3. Insert your bot token and credentials into the telebot-hook1x-cfg.php configuration file.
+2. Create the necessary MySQL table by copying the command from the telebot-hook1x-cfg-example.php file.
+3. Insert your bot token and credentials into the telebot-hook1x-cfg-example.php configuration file and rename it to telebot-hook1x-cfg.php.
 4. Place all bot files in a publicly accessible folder within your Apache web server.
 5. Establish a webhook, ensuring it uses HTTPS, and point it to the following URL: https://your-server/telebot-hook1x.php. All information regarding webhooks can be found here: https://core.telegram.org/bots/webhooks
 6. You are now ready to start chatting with your bot.
