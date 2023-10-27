@@ -158,10 +158,17 @@ if ($chatCookieId !== $adminChatId . 'cookie_chat_passed_tst1212') {
             margin: 5px;
             background-color: #f5f5ff;
             overflow: auto;
-        }
-        .checkbox {
-            display: block;
-        }
+	}
+#massMessageButton {
+        background-color: red;
+        color: white;
+        text-align: center;
+        display: block;
+        margin: 0 auto;
+        padding: 10px 20px; /* Adjust padding as needed */
+        border: none;
+        cursor: pointer;
+    }
     </style>
 </head>
 <body>
@@ -180,7 +187,7 @@ if ($chatCookieId !== $adminChatId . 'cookie_chat_passed_tst1212') {
                 <p>Image to send: <?= $sch1['simg'] ?></p>
                 <p class="rounded-block2" id="sch1im"><?= $sch1['message'] ?></p>
                 <p>User keys: <?= $sch1['ukeys'] ?></p>
-                <button onclick="openModalSch1(<?= $sch1['id'] ?>, '<?= $sch1['message'] ?>', <?= $sch1['t_out'] ?>, '<?= $sch1['simg'] ?>', '<?= $sch1['ukeys'] ?>')">Modify</button>
+ <button onclick="openModalSch1(<?= $sch1['id'] ?>,`<?= $sch1['message'] ?>`, <?= $sch1['t_out'] ?>, '<?= $sch1['simg'] ?>', '<?= $sch1['ukeys'] ?>')">Modify</button>
                 <script> var sch1IDValue = <?= $sch1['id'] ?>; </script>
             </div>
         </td>
@@ -207,31 +214,126 @@ if ($chatCookieId !== $adminChatId . 'cookie_chat_passed_tst1212') {
 </table>
 
 
-
-    <h1>Admin Variables</h1>
-    <table >
+ <h1>Admin Variables</h1>
+    <table id="var1" >
         <tr>
             <th>ID</th>
             <th>Param</th>
             <th>Value</th>
             <th>Action</th>
         </tr>
-
         <?php
         foreach ($vars as $var) {
 	echo "<tr>";
  	echo "<td>" . $var['id'] . "</td>";
             echo "<td>" . $var['param'] . "</td>";
             echo "<td>" . $var['value'] . "</td>";
-            echo "<td>Action</td>";
+ echo '<td> <button onclick="openModal(`'. $var['id'] .'`, `'. $var['param'].'`, `'. $var['value'] .'`)">Change value</button> </td>';
             echo "</tr>";
         }
         ?>
     </table>
+
+<script>document.getElementById("messageCount").value = sch1IDValue;</script>
+
+<div id="modalSch1" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeSch1Modal()">&times;</span>
+        <h2 class="infomessage5" id="modalSch1Title">Modify Message</h2>
+        <form method="POST" action="/change-event">
+           <p>
+                <label for="modalSch1Timeout">Timeout:</label>
+                <input type="text" name="t_out" id="modalSch1Timeout"> &nbsp;
+                <label for="modalSch1Image">Image to Send:</label>
+                <input type="text" name="image" id="modalSch1Image">
+            </p>
+        <input type="hidden" name="id_v" id="modalSch1Id">
+                <input type="hidden" name="ev_id" id="ev_idm" value=1>
+                <input type="hidden" name="event_date" id="event_datem" value="2023-10-20">
+            <p>
+                <label for="modalSch1Value">Message:</label><br>
+                <textarea name="fieldm" cols="80" rows="30" required id="modalSch1Value"></textarea>
+            </p>
+            <p><label for="ukeys1">User keys:</label>
+        <input type="text" name="ukeys" id="ukeys1"></p>
+            <br><input type="submit" value=" Change ">
+        </form>
+    </div>
+</div>
+<div id="myModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <p id="modalContent">"paramValue"</p>
+        <form method="POST" action="/change-v">
+            <input type="hidden" name="id_v" id="paramId">
+            <textarea title="afldx" name="field" cols="80" rows="30" required id="paramValue"></textarea>
+            <br>
+            <input type="submit" value="Change">
+        </form>
+	<p>
+        <form method="POST" action="/telebot1xmassmessage" id="massMessageForm" style="display: none;">
+            <input type="hidden" name="message" id="massMessageInput">
+        </form>
+        <button id="massMessageButton" onclick="triggerMassMessage()" style="display: none;">Mass Message!</button>
+	</p>  </div>
+</div>
+
+<script>
+function openModalSch1(messageId, messageValue, timeout, image, ukeys) {
+    var modal = document.getElementById("modalSch1");
+    var modalTitle = document.getElementById("modalSch1Title");
+    var modalIdField = document.getElementById("modalSch1Id");
+    var modalValueField = document.getElementById("modalSch1Value");
+    var modalTimeoutField = document.getElementById("modalSch1Timeout");
+    var modalImageField = document.getElementById("modalSch1Image");
+    var modalUkeysField = document.getElementById("ukeys1");
+    modalTitle.textContent = "Modify Message #" + messageId;
+    modalIdField.value = messageId;
+    modalValueField.value = messageValue;
+    modalTimeoutField.value = timeout;
+    modalImageField.value = image;
+    modalUkeysField.value = ukeys;
+    modal.style.display = "block";
+}
+
+function closeSch1Modal() {
+    var modal = document.getElementById("modalSch1");
+    modal.style.display = "none";
+}
+
+function openModal(paramId, paramParam, paramValue) {
+    var modal = document.getElementById("myModal");
+    var modalContent = document.getElementById("modalContent");
+    var paramIdField = document.getElementById("paramId");
+    var paramValueField = document.getElementById("paramValue");
+    var massMessageForm = document.getElementById("massMessageForm");
+    var massMessageInput = document.getElementById("massMessageInput");
+    var massMessageButton = document.getElementById("massMessageButton");
+    modalContent.innerHTML = paramParam;
+    paramIdField.value = paramId;
+    paramValueField.value = paramValue;
+    if (paramParam === "massmessage1") {
+        massMessageForm.style.display = "block";
+        massMessageInput.value = paramValue;
+        massMessageButton.style.display = "block";
+    } else {
+        massMessageForm.style.display = "none";
+        massMessageButton.style.display = "none";
+    }
+
+    modal.style.display = "block";
+}
+function triggerMassMessage() {
+    var massMessageForm = document.getElementById("massMessageForm");
+    massMessageForm.submit();
+}
+function closeModal() {
+    var modal = document.getElementById("myModal");
+    modal.style.display = "none";
+}
+</script>
 </body>
 </html>
-
-
 <?php
 }
 $mysqli->close();
