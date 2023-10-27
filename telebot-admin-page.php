@@ -68,7 +68,7 @@ if (isset($_POST['mmessage'])) {
 list($sentMessages, $errorMessages) = massMessage($mysqli, $mmessage, $bot_token);
  $MMform = 0;
 // Display the results
-echo "Messages sent:\n";
+echo "Messages sent to:\n";
 foreach ($sentMessages as $sentMessage) {
     echo $sentMessage . "\n";
 }
