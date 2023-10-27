@@ -21,7 +21,8 @@ if ($chatCookieId !== $adminChatId . 'cookie_chat_passed_tst1212') {
 } else {
 
 // Retrieve variables from the database
-$vars = getVarsTable($mysqli);
+	$vars = getVarsTable($mysqli);
+	$scvars = getScheduledTable($mysqli, 1);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -70,14 +71,12 @@ $vars = getVarsTable($mysqli);
             text-align: left;
             font-size: 10px;
         }
-
         .infomessage3 {
             background-color: #f180a1;
             text-align: center;
             font-size: 20px;
             padding: 10px;
         }
-
         .infomessage4 {
             background-color: #80f1a1;
             text-align: left;
@@ -166,8 +165,51 @@ $vars = getVarsTable($mysqli);
     </style>
 </head>
 <body>
+<h1>Bot Scheduler</h1>
+
+
+<table id="sch1" >
+<?php $counter = 0;
+   foreach ($scvars as $sch1) : 
+    if ($counter % 4 == 0) : ?>
+            <tr>
+        <?php endif; ?>
+        <td>
+            <div class="rounded-block">
+                <h3>Message #<?= $sch1['id'] ?> &nbsp; Timeout: <?= $sch1['t_out'] ?>h.</h3>
+                <p>Image to send: <?= $sch1['simg'] ?></p>
+                <p class="rounded-block2" id="sch1im"><?= $sch1['message'] ?></p>
+                <p>User keys: <?= $sch1['ukeys'] ?></p>
+                <button onclick="openModalSch1(<?= $sch1['id'] ?>, '<?= $sch1['message'] ?>', <?= $sch1['t_out'] ?>, '<?= $sch1['simg'] ?>', '<?= $sch1['ukeys'] ?>')">Modify</button>
+                <script> var sch1IDValue = <?= $sch1['id'] ?>; </script>
+            </div>
+        </td>
+        <?php if ($counter % 4 == 3) : ?>
+            </tr>
+        <?php endif; ?>
+        <?php $counter++; ?>
+    <?php endforeach; ?>
+    <tr>
+        <td>
+            <h3>&nbsp;<label for="messageCount">Number of messages: </label>
+                <select name="msgcnt" id="messageCount" onchange="window.location.href='/change-schnum?msglast=8&msgcount='+this.value;">
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                </select>
+            </h3>
+        </td>
+    </tr>
+</table>
+
+
+
     <h1>Admin Variables</h1>
-    <table border="1">
+    <table >
         <tr>
             <th>ID</th>
             <th>Param</th>

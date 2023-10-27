@@ -62,7 +62,6 @@ function getVarsTable($conn) {
     // Check if there are results
     if ($result->num_rows > 0) {
         $users = array();
-
         // Fetch each row as an associative array
         while ($row = $result->fetch_assoc()) {
             $users[] = $row;
@@ -75,28 +74,17 @@ function getVarsTable($conn) {
 }
 // fetch message scheduler for admin 
 function getScheduledTable($conn, $ev_id) {
-    try {
-        $query = "SELECT * FROM telebot_sched WHERE ev_id = ? ORDER BY id";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $ev_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result === false) {
-            throw new Exception("Query execution failed: " . $stmt->error);
-        }
-
-        $results = [];
-
+        $query = "SELECT * FROM telebot_sched WHERE ev_id = $ev_id ORDER BY id";
+    $result = $conn->query($query);
+    if ($result->num_rows > 0) {
+        $urs = array();
         while ($row = $result->fetch_assoc()) {
-            $results[] = $row;
-        }
-
-        return $results;
-    } catch (Exception $e) {
-        // Handle any exceptions (e.g., database connection error)
-        echo "Error: " . $e->getMessage();
-        return [];
+            $urs[] = $row;
+	}
+        return $urs;
+    } else {
+        // No results found
+        return array();
     }
 }
 
@@ -105,10 +93,8 @@ function getLast24Users($conn) {
 
     // Query to retrieve the last 24 rows with the most recent timestamps
     $query = "SELECT * FROM telebot_users ORDER BY lastupd DESC LIMIT 24";
-
     // Execute the query
     $result = $conn->query($query);
-
     // Check if there are results
     if ($result->num_rows > 0) {
         $users = array();
