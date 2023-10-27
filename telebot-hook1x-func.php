@@ -54,6 +54,56 @@ function addOrUpdateUser($chat_id, $name, $message, $conn) {
 
 }
 
+// tables for admin page
+function getVarsTable($conn) {
+    try {
+        $query = "SELECT * FROM telebot_vars ORDER BY param";
+        $result = $conn->query($query);
+
+        if ($result === false) {
+            throw new Exception("Query execution failed: " . $conn->error);
+        }
+
+        $results = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $results[] = $row;
+        }
+
+        return $results;
+    } catch (Exception $e) {
+        // Handle any exceptions (e.g., database connection error)
+        echo "Error: " . $e->getMessage();
+        return [];
+    }
+}
+
+function getScheduledTable($conn, $ev_id) {
+    try {
+        $query = "SELECT * FROM telebot_sched WHERE ev_id = ? ORDER BY id";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $ev_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result === false) {
+            throw new Exception("Query execution failed: " . $stmt->error);
+        }
+
+        $results = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $results[] = $row;
+        }
+
+        return $results;
+    } catch (Exception $e) {
+        // Handle any exceptions (e.g., database connection error)
+        echo "Error: " . $e->getMessage();
+        return [];
+    }
+}
+
 // Function to get the last 24 rows with the most recent timestamps
 function getLast24Users($conn) {
 
