@@ -1,5 +1,5 @@
 <?php
-// Ivan Deus telebot v05
+// Ivan Deus telebot php version 
 // configuration inclusion
 require 'telebot-hook1x-cfg.php';
 require 'telebot-hook1x-func.php';
@@ -101,7 +101,6 @@ if (count($hashComponents) === 5) {
     $hash = $hash."=";
     // Compare the computed hash with the stored hash
     if (hash_equals($hash, $computedHash)) {
-        echo "Hashes match. Password is correct.";
         try {
             // Create a response object and set cookies
             header("Location: admin-page"); // Redirect
