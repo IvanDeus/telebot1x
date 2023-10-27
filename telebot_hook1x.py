@@ -10,7 +10,7 @@ from telebot import types
 from telebot_hook1x_func import *
 app = Flask(__name__)
 # Config import
-from telebot_hook1x_cfg import bot_token, admin_name, db_host, db_username, db_password, db_name, mysql_unix_socket
+from telebot_hook1x_cfg import bot_token, db_host, db_username, db_password, db_name, mysql_unix_socket
 
 # Initialize the telebot
 bot = telebot.TeleBot(bot_token)
@@ -89,17 +89,6 @@ def handle_stat24_command(chat_id, conn):
             message_lastu += "\n"
       # Send the message to the Telegram bot
     bot.send_message(chat_id, message_lastu)
-
-# Function to retrieve admin chat ID and hashed password from the database
-def find_admin_chatid_and_password(conn, username):
-    cursor = conn.cursor()
-    cursor.execute("SELECT chat_id, passwd FROM telebot_admins WHERE name = %s", (username,))
-    result = cursor.fetchone()
-    cursor.close()
-    if result:
-        admin_chatid, hashed_db_password = result
-        return admin_chatid, hashed_db_password
-    return None, None
 
 # Build user chats table, last 300 records, template allow to filter them
 def get_user_chats_table(conn):
@@ -410,6 +399,7 @@ def telebothook1x():
             message = update.message
             # Access name and chat_id only when there is a message
             name = message.chat.username
+            admin_chatid, hashed_db_password = find_admin_chatid_and_password(conn, name)
             # find first name
             first_name = message.chat.first_name
             if message.chat.last_name:
@@ -425,9 +415,9 @@ def telebothook1x():
             if message.text == '/start':
                 handle_start(message, telebot_vars)
             # handle admin commands
-            elif '/stat24' in message.text and name == admin_name:
+            elif '/stat24' in message.text and chat_id == int(admin_chatid):
                 handle_stat24_command(chat_id, conn)
-            elif '/forward' in message.text and name == admin_name:
+            elif '/forward' in message.text and chat_id == int(admin_chatid):
                  # Find all subscribed chat IDs
                 subscribed_chat_ids = find_subbed_chatids(conn)
                 message_text = message.text[len('/forward '):] #cut command forward

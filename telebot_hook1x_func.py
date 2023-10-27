@@ -5,6 +5,17 @@ import time
 from datetime import datetime, timedelta
 from telebot import types
 
+# Function to retrieve admin chat ID and hashed password from the database
+def find_admin_chatid_and_password(conn, username):
+    cursor = conn.cursor()
+    cursor.execute("SELECT chat_id, passwd FROM telebot_admins WHERE name = %s", (username,))
+    result = cursor.fetchone()
+    cursor.close()
+    if result:
+        admin_chatid, hashed_db_password = result
+        return admin_chatid, hashed_db_password
+    return None, None
+
 # cunstruct keyboard sets for a user message, input is like ('Concert', '/event', 'Help me', '/help', 'Call!', '/manager')
 def inline_button_constructor(my_tuple):
     my_tuple = tuple(my_tuple.split(', '))

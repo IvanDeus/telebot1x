@@ -143,7 +143,6 @@ UNLOCK TABLES;
 
 # Credentials put here
 bot_token = "xxx:xxx"
-admin_name = "ivan"
 # Database connection parameters
 db_host = "localhost"
 db_username = "xxx"
