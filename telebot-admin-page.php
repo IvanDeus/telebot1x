@@ -19,10 +19,67 @@ list($adminChatId, $hashedDbPassword) = findAdminChatIdAndPassword($mysqli, $cha
 if ($chatCookieId !== $adminChatId . 'cookie_chat_passed_tst1212') {
     http_response_code(403); // Return a forbidden error if the cookie is not set
 } else {
+	// Checking if any table shoyuld be updated
+	// sheduler and variables
+	// then messaging
+	//
+$changevarform = 0;    
+$changeshedform = 0;    
+$changeMessageCount = 0;    
+$MMform = 0;    
+// Get chat_id and name from the form data
+//
+if (isset($_POST['id_v'])) {
+ $id_v = $_POST['id_v'];
+ $changevarform = $_POST['changevarform'];
+ $value_v = $_POST['field'];}
+// Set variables in the database
+if ($changevarform == 1) {
+$value_v = str_replace('"', "'", $value_v);
+  setVarsTable($mysqli, $id_v, $value_v);
+    $changevarform = 0;
+}
+if (isset($_POST['t_out'])) {
+    $t_out = $_POST['t_out'];
+    $event_date = $_POST['event_date'];
+    $simg = $_POST['image'];
+    $changeshedform = $_POST['changeshedform'];
+    $message = $_POST['fieldm'];
+    $ukeys = $_POST['ukeys'];
+    $ev_id = $_POST['ev_id'];}
+    if ($changeshedform == 1) {
+$message = str_replace('"', "'", $message);
+ setScheduledTable($mysqli, $id_v, $t_out, $simg, $message, $ukeys, $event_date, $ev_id);
+ $changeshedform = 0;
+    }
+if (isset($_GET['changeMessageCount'])) {
+    $changeMessageCount = $_GET['changeMessageCount'];
+    $msglast = $_GET['msglast'];
+    $msgcount = $_GET['msgcount'];}
+  if ($changeMessageCount == 1) {
+ updateSchedMessageNumber($mysqli, $msgcount, $msglast);	    
+	$changeMessageCount = 0; } 
 
-// Retrieve variables from the database
+if (isset($_POST['mmessage'])) {
+    $mmessage = $_POST['mmessage'];}
+  if ($MMform == 1) {
+// Call the massMessage function to send the message
+list($sentMessages, $errorMessages) = massMessage($mysqli, $mmessage, $bot_token);
+ $MMform = 0;
+// Display the results
+echo "Messages sent:\n";
+foreach ($sentMessages as $sentMessage) {
+    echo $sentMessage . "\n";
+}
+echo "\nError messages:\n";
+foreach ($errorMessages as $errorMessage) {
+    echo $errorMessage . "\n";
+  } 
+  }  
+    // Retrieve variables from the database
 	$vars = getVarsTable($mysqli);
 	$scvars = getScheduledTable($mysqli, 1);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -199,7 +256,7 @@ if ($chatCookieId !== $adminChatId . 'cookie_chat_passed_tst1212') {
     <tr>
         <td>
             <h3>&nbsp;<label for="messageCount">Number of messages: </label>
-                <select name="msgcnt" id="messageCount" onchange="window.location.href='/change-schnum?msglast=8&msgcount='+this.value;">
+                <select name="msgcnt" id="messageCount" onchange="window.location.href='?changeMessageCount=1&msglast=8&msgcount='+this.value;">
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
@@ -240,7 +297,7 @@ if ($chatCookieId !== $adminChatId . 'cookie_chat_passed_tst1212') {
     <div class="modal-content">
         <span class="close" onclick="closeSch1Modal()">&times;</span>
         <h2 class="infomessage5" id="modalSch1Title">Modify Message</h2>
-        <form method="POST" action="/change-event">
+        <form method="POST" action="/admin-page">
            <p>
                 <label for="modalSch1Timeout">Timeout:</label>
                 <input type="text" name="t_out" id="modalSch1Timeout"> &nbsp;
@@ -249,6 +306,7 @@ if ($chatCookieId !== $adminChatId . 'cookie_chat_passed_tst1212') {
             </p>
         <input type="hidden" name="id_v" id="modalSch1Id">
                 <input type="hidden" name="ev_id" id="ev_idm" value=1>
+            <input type="hidden" name="changeshedform" id="changeshedform" value=1>
                 <input type="hidden" name="event_date" id="event_datem" value="2023-10-20">
             <p>
                 <label for="modalSch1Value">Message:</label><br>
@@ -264,15 +322,17 @@ if ($chatCookieId !== $adminChatId . 'cookie_chat_passed_tst1212') {
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <p id="modalContent">"paramValue"</p>
-        <form method="POST" action="/change-v">
+        <form method="POST" action="/admin-page">
             <input type="hidden" name="id_v" id="paramId">
+            <input type="hidden" name="changevarform" id="changevarform" value=1>
             <textarea title="afldx" name="field" cols="80" rows="30" required id="paramValue"></textarea>
             <br>
             <input type="submit" value="Change">
         </form>
 	<p>
-        <form method="POST" action="/telebot1xmassmessage" id="massMessageForm" style="display: none;">
-            <input type="hidden" name="message" id="massMessageInput">
+        <form method="POST" action="/admin-page" id="massMessageForm" style="display: none;">
+            <input type="hidden" name="mmessage" id="massMessageInput">
+            <input type="hidden" name="MMform" id="MMform" value=1>
         </form>
         <button id="massMessageButton" onclick="triggerMassMessage()" style="display: none;">Mass Message!</button>
 	</p>  </div>
@@ -335,6 +395,7 @@ function closeModal() {
 </body>
 </html>
 <?php
+
 }
 $mysqli->close();
 ?>

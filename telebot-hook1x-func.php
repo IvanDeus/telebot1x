@@ -87,6 +87,100 @@ function getScheduledTable($conn, $ev_id) {
         return array();
     }
 }
+// Set variables for admin page
+function setVarsTable($conn, $id_v, $value_v) {
+    try {
+        $query = "UPDATE telebot_vars SET value = ? WHERE id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("si", $value_v, $id_v);
+        $stmt->execute();
+        $stmt->close();
+        $conn->commit();
+    } catch (mysqli_sql_exception $e) {
+        // Handle any database errors here
+        echo "Database error: " . $e->getMessage();
+    }
+}
+// update scheduler 
+function setScheduledTable($conn, $id_v, $t_out, $simg, $message, $ukeys, $event_date, $ev_id) {
+    try {
+        $query = "UPDATE telebot_sched SET t_out = ?, simg = ?, message = ?, ukeys = ?, event_date = ?, ev_id = ? WHERE id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ssssssi", $t_out, $simg, $message, $ukeys, $event_date, $ev_id, $id_v);
+        $stmt->execute();
+        $stmt->close();
+        $conn->commit();
+    } catch (mysqli_sql_exception $e) {
+        // Handle any database errors
+        echo "Database error: " . $e->getMessage();
+    }
+}
+
+function updateSchedMessageNumber($connection, $x, $y) {
+    try {
+        $updateSql = "UPDATE telebot_sched SET ev_id = 99 WHERE id > ? AND id <= ?";
+        $stmt = $connection->prepare($updateSql);
+        $stmt->bind_param("ii", $x, $y);
+        $stmt->execute();
+
+        $updateSql = "UPDATE telebot_sched SET ev_id = 1 WHERE id <= ?";
+        $stmt = $connection->prepare($updateSql);
+        $stmt->bind_param("i", $x);
+        $stmt->execute();
+
+        $connection->commit();
+    } catch (mysqli_sql_exception $e) {
+        // Handle any database errors here
+        echo "Database error: " . $e->getMessage();
+    }
+}
+// Function to send a one-time mass message to all subscribed users
+function massMessage($conn, $message, $bot_token) {
+    $userChatIDs = findSubscribedChatIDs($conn);
+    $sentMessages = [];
+    $errorMessages = [];
+
+    foreach ($userChatIDs as $chatID) {
+        try {
+            // Send a message
+	send_telegram_message($chatID, $message, $bot_token);
+            $sentMessages[] = "Sent to: " . $chatID;
+            usleep(500000); // Sleep for 0.5 seconds
+        } catch (TelegramError $e) {
+            if ($e->getCode() == 403) {
+                if (strpos($e->getMessage(), "Forbidden: bot was blocked by the user") !== false) {
+                    $errorMessages[] = "User with chat_id $chatID has blocked the bot";
+                } else {
+                    $errorMessages[] = "A 403 error occurred for chat_id $chatID: " . $e->getMessage();
+                }
+            }
+        }
+    }
+
+    return [$sentMessages, $errorMessages];
+}
+
+// Function to find all subscribed chat IDs
+function findSubscribedChatIDs($conn) {
+    try {
+        $query = "SELECT chat_id FROM telebot_users WHERE Sub = 1";
+        $result = $conn->query($query);
+
+        if ($result->num_rows > 0) {
+            $chatIDs = [];
+            while ($row = $result->fetch_assoc()) {
+                $chatIDs[] = $row['chat_id'];
+            }
+            return $chatIDs;
+        } else {
+            return [];
+        }
+    } catch (Exception $e) {
+        // Handle any exceptions (e.g., database connection error)
+        echo "Error: " . $e->getMessage();
+        return [];
+    }
+}
 
 // get the last 24 rows with the most recent timestamps
 function getLast24Users($conn) {
