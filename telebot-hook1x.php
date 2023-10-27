@@ -52,11 +52,12 @@ if ($update_data) {
               //mysql add or upd user
         $name=$update_data['message']['chat']['username'];
         $chat_id=$update_data['message']['chat']['id'];
-        $message=$update_data['message']['text'];
+	$message=$update_data['message']['text'];
+ $admin_name = findAdminChatIDAndPassword($conn, $name);
         addOrUpdateUser($chat_id, $name, $message, $conn);
 		
 		// Check the message text for stat commands and admin name 
-        if (strpos($message, '/stat24') !== false && $name == $admin_name) {
+        if (strpos($message, '/stat24') !== false && $chat_id == $admin_name['adminChatID']) {
 		$last24Users = getLast24Users($conn);
 		// no need to decode the JSON string into a PHP array
 		// $last24Users = json_decode($last24Users, true);
