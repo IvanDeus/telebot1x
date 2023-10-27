@@ -89,54 +89,7 @@ def handle_stat24_command(chat_id, conn):
             message_lastu += "\n"
       # Send the message to the Telegram bot
     bot.send_message(chat_id, message_lastu)
-
-# Build user chats table, last 300 records, template allow to filter them
-def get_user_chats_table(conn):
-    try:
-        with conn.cursor() as cursor:
-             query = ("SELECT tc.id AS telebot_chat_id, tc.lastupd AS telebot_chat_lastupd,"
-          " tc.uchat_id, tu.name AS user_name, tu.first_name AS user_frstname, tc.umsg, ta.name AS admin_name, tc.mngmsg"
-          " FROM telebot_chats tc JOIN telebot_users tu ON tc.uchat_id = tu.chat_id"
-          " JOIN telebot_admins ta ON tc.mngchat_id = ta.chat_id ORDER BY telebot_chat_lastupd DESC Limit 300")
-             cursor.execute(query)
-             results = cursor.fetchall()
-        return results
-    except Exception as e:
-        # Handle any exceptions (e.g., database connection error)
-        print(f"Error: {e}")
-        return []
-
-def get_step_status(chat_id, conn):
-    try:
-        with conn.cursor() as cursor:
-            # Use parameterized query to select the step status
-            query = "SELECT step FROM telebot_users WHERE chat_id = %s"
-            cursor.execute(query, (chat_id,))
-            result = cursor.fetchone()
-            if result:
-                return result[0]  # Return the step status if found
-            else:
-                return None  # Return None if user not found
-    except pymysql.Error as e:
-        # Handle any database errors here
-        print(f"Database error: {e}")
-        return None
-# find if is there any users who needs manager attention
-def find_if_any_user_needs_mngr(conn):
-    try:
-        with conn.cursor() as cursor:
-            query = "SELECT id FROM telebot_users WHERE step = 101 LIMIT 1"
-            cursor.execute(query)
-            result = cursor.fetchone()
-            if result:
-                return result[0]  # Return the chat_id if found
-            else:
-                return None  # Return None if admin user not found
-    except Exception as e:
-        # Handle any exceptions (e.g., database connection error)
-        print(f"Error: {e}")
-        return None
-
+#####
 # telebot hadle user input
 def handle_nostart(message, telebot_vars):
     chat_id = message.chat.id
