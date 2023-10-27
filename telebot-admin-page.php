@@ -61,7 +61,8 @@ if (isset($_GET['changeMessageCount'])) {
 	$changeMessageCount = 0; } 
 
 if (isset($_POST['mmessage'])) {
-    $mmessage = $_POST['mmessage'];}
+    $mmessage = $_POST['mmessage'];
+    $MMform = $_POST['MMform'];}
   if ($MMform == 1) {
 // Call the massMessage function to send the message
 list($sentMessages, $errorMessages) = massMessage($mysqli, $mmessage, $bot_token);
