@@ -57,25 +57,20 @@ function addOrUpdateUser($chat_id, $name, $message, $conn) {
 
 // tables for admin page
 function getVarsTable($conn) {
-    try {
         $query = "SELECT * FROM telebot_vars ORDER BY param";
         $result = $conn->query($query);
+    // Check if there are results
+    if ($result->num_rows > 0) {
+        $users = array();
 
-        if ($result === false) {
-            throw new Exception("Query execution failed: " . $conn->error);
-        }
-
-        $results = [];
-
+        // Fetch each row as an associative array
         while ($row = $result->fetch_assoc()) {
-            $results[] = $row;
+            $users[] = $row;
         }
-
-        return $results;
-    } catch (Exception $e) {
-        // Handle any exceptions (e.g., database connection error)
-        echo "Error: " . $e->getMessage();
-        return [];
+        return $users;
+    } else {
+        // No results found
+        return array();
     }
 }
 // fetch message scheduler for admin 
