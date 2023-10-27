@@ -1,6 +1,7 @@
 <?php
-// Ivan Deus telebot v05
-// configuration inclusion
+// Ivan Deus telebot php version 
+
+// retrieve variables 
 function fetchTelebotVarsIntoArray($conn) {
     try {
         $query = "SELECT param, value FROM telebot_vars";
