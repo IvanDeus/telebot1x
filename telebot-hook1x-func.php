@@ -78,7 +78,7 @@ function getVarsTable($conn) {
         return [];
     }
 }
-
+// fetch message scheduler for admin 
 function getScheduledTable($conn, $ev_id) {
     try {
         $query = "SELECT * FROM telebot_sched WHERE ev_id = ? ORDER BY id";
@@ -105,7 +105,7 @@ function getScheduledTable($conn, $ev_id) {
     }
 }
 
-// Function to get the last 24 rows with the most recent timestamps
+// get the last 24 rows with the most recent timestamps
 function getLast24Users($conn) {
 
     // Query to retrieve the last 24 rows with the most recent timestamps
@@ -129,7 +129,7 @@ function getLast24Users($conn) {
     }
 }
 
-// Function to send an image to the Telegram bot
+// send an image to the Telegram bot
 function send_image($chat_id, $file_path, $file_type, $file_name, $bot_token) {
     // Initialize cURL session
     $ch = curl_init("https://api.telegram.org/bot$bot_token/sendPhoto");
@@ -166,7 +166,7 @@ function send_image($chat_id, $file_path, $file_type, $file_name, $bot_token) {
 }
 
 
-// Function to send a file to the Telegram bot
+// send a file to the Telegram bot
 function send_file($chat_id, $file_path, $file_type, $file_name, $bot_token) {
     // Initialize cURL session
     $ch = curl_init("https://api.telegram.org/bot$bot_token/sendDocument");
@@ -203,7 +203,7 @@ function send_file($chat_id, $file_path, $file_type, $file_name, $bot_token) {
 }
 
 
-// Function to send a message to the Telegram bot
+// send a message to the Telegram bot
 function send_telegram_message($chat_id, $message, $bot_token) {
     $url = "https://api.telegram.org/bot$bot_token/sendMessage";
     $data = array(
