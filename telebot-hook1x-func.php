@@ -144,7 +144,7 @@ function massMessage($conn, $message, $bot_token) {
 	    try {
             // Send a message
 	send_telegram_message($chatID, $message, $bot_token);
-            $sentMessages[] = " : " . $chatID;
+            $sentMessages[] = $chatID . " : ";
             usleep(500000); // Sleep for 0.5 seconds
         } catch (TelegramError $e) {
             if ($e->getCode() == 403) {
