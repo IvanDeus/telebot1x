@@ -104,8 +104,8 @@ if (count($hashComponents) === 5) {
     if (hash_equals($hash, $computedHash)) {
         try {
             // Create a response object and set cookies
-            header("Location: admin-page"); // Redirect
-            setcookie('chat_cookie_id', $adminChatID . 'cookie_chat_passed_tst1212', time() + 3 * 24 * 3600);
+            header("Location: admin-page"); 
+            setcookie('chat_cookie_id', $hasharray['adminChatID'] . '555october_tst2023', time() + 3 * 24 * 3600);
             setcookie('chat_cookie_name', $username, time() + 3 * 24 * 3600);
             exit; // Redirect to the admin page
         } catch (Exception $e) {
