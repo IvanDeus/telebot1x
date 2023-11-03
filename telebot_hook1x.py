@@ -245,7 +245,9 @@ def telebot1xmassmessage():
         abort(403)  # Return a forbidden error if the cookie is not set
     try:
        bot = telebot.TeleBot(bot_token)
-       message = request.form['message']
+       id_v = request.form['id_v']
+       message = request.form['field']
+       set_vars_table(conn, id_v, message)
        sent_messages, error_messages = massmessage(conn, message, bot)
        conn.close()
        # Create a response
