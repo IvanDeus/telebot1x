@@ -4,7 +4,6 @@ import pymysql
 import time
 from datetime import datetime, timedelta
 from telebot import types
-
 # Function to retrieve admin chat ID and hashed password from the database
 def find_admin_chatid_and_password(conn, username):
     cursor = conn.cursor()
@@ -15,7 +14,6 @@ def find_admin_chatid_and_password(conn, username):
         admin_chatid, hashed_db_password = result
         return admin_chatid, hashed_db_password
     return None, None
-
 # cunstruct keyboard sets for a user message, input is like ('Concert', '/event', 'Help me', '/help', 'Call!', '/manager')
 def inline_button_constructor(my_tuple):
     my_tuple = tuple(my_tuple.split(', '))
@@ -28,7 +26,6 @@ def inline_button_constructor(my_tuple):
         )
     keys.add(*buttons)
     return keys
-
 # send scheduled message with image and keyboard
 def send_notification(bot, chat_id, photo_path, message, ukeys):
     try:
@@ -65,8 +62,6 @@ def massmessage(conn, message, bot):
                     error_messages.append(f"A 403 error occurred for chat_id {chat_id}: {str(e)}")
 
     return sent_messages, error_messages
-
-
 # get all scheduled tasks for admin page
 def get_scheduled_table(conn, ev_id):
     try:
@@ -79,7 +74,6 @@ def get_scheduled_table(conn, ev_id):
         # Handle any exceptions (e.g., database connection error)
         print(f"Error: {e}")
         return []
-
 # fetch all config vars defined in mysql
 def fetch_telebot_vars_into_dict(conn):
     try:
@@ -87,20 +81,15 @@ def fetch_telebot_vars_into_dict(conn):
             query = "SELECT param, value FROM telebot_vars"
             cursor.execute(query)
             result = cursor.fetchall()
-
-            telebot_vars = {}  # Initialize an empty dictionary
-
+            telebot_vars = {} 
             for row in result:
                 param, value = row
                 telebot_vars[param] = value  # Add data to the dictionary
-
             return telebot_vars
-
     except pymysql.Error as e:
         # Handle any database errors here
         print(f"Database error: {e}")
         return {}
-
 # get all variables for admin page
 def get_vars_table(conn):
     try:
@@ -121,9 +110,7 @@ def get_users_to_notify(conn, hours, step):
         query = f"SELECT chat_id, first_name FROM telebot_users WHERE lastupd < '{twenty_four_hours_ago_str}' AND step = '{step}' AND Sub = 1"
         cursor.execute(query)
         results = cursor.fetchall()
-
     return results
-
 # set variables for admin page
 def set_vars_table(conn, id_v, value_v):
     try:
@@ -134,7 +121,6 @@ def set_vars_table(conn, id_v, value_v):
     except pymysql.Error as e:
         # Handle any database errors here
         print(f"Database error: {e}")
-
 # set schedule for admin page
 def set_scheduled_table(conn, id_v, t_out, simg, message, ukeys, event_date, ev_id):
     try:
@@ -145,7 +131,6 @@ def set_scheduled_table(conn, id_v, t_out, simg, message, ukeys, event_date, ev_
     except pymysql.Error as e:
         # Handle any database errors
         print(f"Database error: {e}")
-
 # change subscription status
 def change_sub_status(chat_id, conn, sub):
     try:
@@ -155,11 +140,9 @@ def change_sub_status(chat_id, conn, sub):
             cursor.execute(query, (sub, chat_id))
             # Commit the changes to the database
             conn.commit()
-
     except pymysql.Error as e:
         # Handle any database errors here
         print(f"Database error: {e}")
-
 # Function to find all subscribed chat IDs
 def find_subbed_chatids(conn):
     try:
@@ -175,7 +158,7 @@ def find_subbed_chatids(conn):
         # Handle any exceptions (e.g., database connection error)
         print(f"Error: {e}")
         return []
-
+# change step for scheduler
 def change_step_status(chat_id, conn, stp):
     try:
         with conn.cursor() as cursor:
@@ -187,7 +170,6 @@ def change_step_status(chat_id, conn, stp):
     except pymysql.Error as e:
         # Handle any database errors here
         print(f"Database error: {e}")
-
 # Build user chats table, last 300 records, template allow to filter them
 def get_user_chats_table(conn):
     try:
@@ -249,7 +231,6 @@ def get_manager_chat_id(conn):
         # Handle any exceptions (e.g., database connection error)
         print(f"Error: {e}")
         return None
-
 # write user chats into table
 def update_chat_table(conn, uchat_id, mngmsg):
     try:
@@ -268,11 +249,10 @@ def update_chat_table(conn, uchat_id, mngmsg):
                conn.commit()
             else:
                print("no chat was found by manager")
-
     except pymysql.Error as e:
         # Handle any database errors here
         print(f"Database error: {e}")
-
+# save user message into chat table
 def insert_into_chat_table(conn, uchat_id, mngchat_id, umsg, mngmsg):
     try:
         with conn.cursor() as cursor:
@@ -283,8 +263,7 @@ def insert_into_chat_table(conn, uchat_id, mngchat_id, umsg, mngmsg):
             conn.commit()
     except pymysql.Error as e:
         # Handle any database errors here
-        print(f"Database error: {e}")
-        
+        print(f"Database error: {e}")    
 # set the number of messages in a scheduler
 def update_sched_message_nmbr(connection, x, y):
     try:
