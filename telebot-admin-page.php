@@ -58,12 +58,11 @@ if (isset($_GET['changeMessageCount'])) {
  updateSchedMessageNumber($mysqli, $msgcount, $msglast);	    
 	$changeMessageCount = 0; } 
 
-if (isset($_POST['mmessage'])) {
-    $mmessage = $_POST['mmessage'];
+if (isset($_POST['MMform'])) {
     $MMform = $_POST['MMform'];}
-  if ($MMform == 1) {
+if ($MMform == 1) {
 // Call the massMessage function to send the message
-list($sentMessages, $errorMessages) = massMessage($mysqli, $mmessage, $bot_token);
+list($sentMessages, $errorMessages) = massMessage($mysqli, $value_v, $bot_token);
  $MMform = 0;
 // Display the results
 echo "Messages sent to:\n";
@@ -321,20 +320,16 @@ foreach ($errorMessages as $errorMessage) {
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <p id="modalContent">"paramValue"</p>
-        <form method="POST" action="/admin-page">
+        <form method="POST" action="/admin-page" id="varsform">
             <input type="hidden" name="id_v" id="paramId">
             <input type="hidden" name="changevarform" id="changevarform" value=1>
             <textarea title="afldx" name="field" cols="80" rows="30" required id="paramValue"></textarea>
             <br>
-            <input type="submit" value="Change">
-        </form>
-	<p>
-        <form method="POST" action="/admin-page" id="massMessageForm" style="display: none;">
-            <input type="hidden" name="mmessage" id="massMessageInput">
             <input type="hidden" name="MMform" id="MMform" value=1>
+  <br> <button type="button" id="changeButton" onclick="triggerChange()"> Change </button>
+   <br><br>  <button type="button" id="massMessageButton" onclick="triggerMassMessage()" style="display: none;">Mass Message</button>
         </form>
-        <button id="massMessageButton" onclick="triggerMassMessage()" style="display: none;">Mass Message!</button>
-	</p>  </div>
+    </div>
 </div>
 
 <script>
@@ -365,27 +360,38 @@ function openModal(paramId, paramParam, paramValue) {
     var modalContent = document.getElementById("modalContent");
     var paramIdField = document.getElementById("paramId");
     var paramValueField = document.getElementById("paramValue");
-    var massMessageForm = document.getElementById("massMessageForm");
-    var massMessageInput = document.getElementById("massMessageInput");
+    var massMessageForm = document.getElementById("varsform");
+    var changeButton = document.getElementById("changeButton");
     var massMessageButton = document.getElementById("massMessageButton");
+
     modalContent.innerHTML = paramParam;
     paramIdField.value = paramId;
     paramValueField.value = paramValue;
+
     if (paramParam === "massmessage1") {
-        massMessageForm.style.display = "block";
-        massMessageInput.value = paramValue;
         massMessageButton.style.display = "block";
     } else {
-        massMessageForm.style.display = "none";
         massMessageButton.style.display = "none";
     }
-
     modal.style.display = "block";
 }
-function triggerMassMessage() {
-    var massMessageForm = document.getElementById("massMessageForm");
-    massMessageForm.submit();
+
+function triggerChange() {
+    var changevarform = document.getElementById("changevarform");
+    changevarform.value = 1;
+    var MMform = document.getElementById("MMform");
+    MMform.value = 0;
+    document.getElementById("varsform").submit();
 }
+
+function triggerMassMessage() {
+    var changevarform = document.getElementById("changevarform");
+    changevarform.value = 1;
+    var MMform = document.getElementById("MMform");
+    MMform.value = 1;
+    document.getElementById("varsform").submit();
+}
+
 function closeModal() {
     var modal = document.getElementById("myModal");
     modal.style.display = "none";
