@@ -13,6 +13,8 @@ Installation Steps:
 4. Place all bot files in a publicly accessible folder within your Apache web server.
 5. Establish a webhook, ensuring it uses HTTPS, and point it to the following URL: https://your-server/telebot-hook1x.php. All information regarding webhooks can be found here: https://core.telegram.org/bots/webhooks
 6. It is recommended to use Nginx for proxying bot traffic in this manner: location /telebot-hook1x -> proxy_pass http://localhost/telebot-hook1x.php; location /admin-page -> proxy_pass http://localhost/telebot-admin-page.php; for improved security.
-7. You are now ready to start chatting with your bot.
+7. For a scheduler add into crontab: */8 * * * * php /var/www/html/telebot-ask-user.php > /dev/null
+8. Use https://your-server/telebot-hook1x admin panel to set up scheduler and send mass messages if needed.
+9. You are now ready to start chatting with your bot.
 
 You can interact with the bot using the following available commands: /start, /help, /guide, and /stat24 (exclusive to admin users).
