@@ -26,9 +26,11 @@ $MMform = 0;
 // Get chat_id and name from the form data
 //
 if (isset($_POST['id_v'])) {
- $id_v = $_POST['id_v'];
+	$id_v = $_POST['id_v']; }
+
+if (isset($_POST['changevarform'])) {
  $changevarform = $_POST['changevarform'];
- $value_v = $_POST['field'];}
+ $value_v = $_POST['field']; }
 // Set variables in the database
 if ($changevarform == 1) {
 $value_v = str_replace('"', "'", $value_v);

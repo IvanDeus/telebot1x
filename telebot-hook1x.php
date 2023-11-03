@@ -34,8 +34,9 @@ $pdftosend = $telebotVars['pdftosend'];
             // Handle the /help command
             send_telegram_message($chat_id, 'This is a help message. Try /start or /guide',$bot_token);
         } elseif (strpos($message_text, '/guide') !== false) {
-            // Handle the /guide command to send a PDF file
-            send_file($chat_id, 'telebot-h-files/'.$pdftosend, 'application/pdf', $pdftosend,$bot_token);
+            // Handle the /guide command to send a PDF file and set scheduler to step 1
+		send_file($chat_id, 'telebot-h-files/'.$pdftosend, 'application/pdf', $pdftosend,$bot_token);
+		changeStepStatus($chat_id, $conn, 1);
         } else {
             // Handle other user input as needed
             send_telegram_message($chat_id, "I do not understand. Type /help for assistance.",$bot_token);

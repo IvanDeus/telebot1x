@@ -24,7 +24,7 @@ foreach ($sched_events as $event) {
         $photo_path = $event['simg'];
         $message1 = $event['message'];
         sendNotification($bot_token, $chat_id, $photo_path, $message1, $event['ukeys']);
-        changeStepStatus($chat_id, $conn, $event_id + 1);
+        changeStepStatus($chat_id, $conn, $event['id'] + 1);
 
         if ($is_last_event) {
             // Set feedback mode for the last step

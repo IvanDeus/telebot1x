@@ -2,10 +2,10 @@
 // Ivan Deus telebot php version 
 // send scheduled message with image and keyboard
 function sendNotification($bot_token, $chat_id, $photo, $message, $ukeys) {
-    try {
-    send_image($chat_id, 'telebot-h-files/'.$photo, 'image/jpeg', $photo,$bot_token);
+	try {
+$script_directory = __DIR__; 
+send_image($chat_id, $script_directory.'/telebot-h-files/'.$photo, 'image/jpeg', $photo, $bot_token);
 send_telegram_message($chat_id, $message, $bot_token);
-//        $bot->sendPhoto($chat_id, $photo);
 /*        
         if ($ukeys === "None") {
             $bot->sendMessage($chat_id, $message);
@@ -29,7 +29,6 @@ send_telegram_message($chat_id, $message, $bot_token);
 //# change step for scheduler
 function changeStepStatus($chat_id, $conn, $stp) {
     $query = "UPDATE telebot_users SET step = ? WHERE chat_id = ?";
-
     if ($stmt = $conn->prepare($query)) {
         $stmt->bind_param("ss", $stp, $chat_id);
         $stmt->execute();
