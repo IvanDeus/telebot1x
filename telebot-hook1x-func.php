@@ -1,6 +1,22 @@
 <?php
 // Ivan Deus telebot php version 
 
+// for ask user scheduler
+function getUsersToNotify($conn, $hours, $step) {
+    $twentyFourHoursAgo = new DateTime();
+    $twentyFourHoursAgo->sub(new DateInterval("PT{$hours}H")); 
+    $twentyFourHoursAgoStr = $twentyFourHoursAgo->format('Y-m-d H:i:s');
+    $query = "SELECT chat_id, first_name FROM telebot_users WHERE lastupd < '{$twentyFourHoursAgoStr}' AND step = '{$step}' AND Sub = 1";
+    $users = array();
+    if ($result = $conn->query($query)) {
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $result->free();
+    }
+    return $users;
+}
+
 // retrieve variables 
 function fetchTelebotVarsIntoArray($conn) {
     try {
