@@ -1,5 +1,44 @@
 <?php
 // Ivan Deus telebot php version 
+// send scheduled message with image and keyboard
+function sendNotification($bot_token, $chat_id, $photo, $message, $ukeys) {
+    try {
+    send_image($chat_id, 'telebot-h-files/'.$photo, 'image/jpeg', $photo,$bot_token);
+send_telegram_message($chat_id, $message, $bot_token);
+//        $bot->sendPhoto($chat_id, $photo);
+/*        
+        if ($ukeys === "None") {
+            $bot->sendMessage($chat_id, $message);
+        } else {
+            $keyboard = inlineButtonConstructor($ukeys);
+            $bot->sendMessage($chat_id, $message, null, false, null, $keyboard);
+        }
+*/      
+        sleep(0.5);
+    } catch (Exception $e) {
+        if ($e->getCode() === 403) {
+            if (strpos($e->getMessage(), "Forbidden: bot was blocked by the user") !== false) {
+                echo "User with chat_id $chat_id has blocked the bot";
+            } else {
+                echo "A 403 error occurred for chat_id $chat_id: " . $e->getMessage();
+            }
+        }
+    }
+}
+
+//# change step for scheduler
+function changeStepStatus($chat_id, $conn, $stp) {
+    $query = "UPDATE telebot_users SET step = ? WHERE chat_id = ?";
+
+    if ($stmt = $conn->prepare($query)) {
+        $stmt->bind_param("ss", $stp, $chat_id);
+        $stmt->execute();
+        $stmt->close();
+    } else {
+        // Handle any database errors here
+        echo "Database error: " . $conn->error;
+    }
+}
 
 // for ask user scheduler
 function getUsersToNotify($conn, $hours, $step) {

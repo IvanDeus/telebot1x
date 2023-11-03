@@ -21,9 +21,9 @@ foreach ($sched_events as $event) {
     $is_last_event = $event === end($sched_events);
     foreach ($users_to_notify as $user) {
         $chat_id = $user['chat_id'];
-        $photo_path = $script_directory . '/telebot-h-files/' . $event['simg'];
+        $photo_path = $event['simg'];
         $message1 = $event['message'];
-        sendNotification($bot, $chat_id, $photo_path, $message1, $event['ukeys']);
+        sendNotification($bot_token, $chat_id, $photo_path, $message1, $event['ukeys']);
         changeStepStatus($chat_id, $conn, $event_id + 1);
 
         if ($is_last_event) {
