@@ -35,7 +35,7 @@ def send_notification(bot, chat_id, photo_path, message, ukeys):
             bot.send_message(chat_id, message)
         else:
             bot.send_message(chat_id, message, reply_markup=inline_button_constructor(ukeys))
-        time.sleep(0.5)
+        time.sleep(0.3)
     except telebot.apihelper.ApiTelegramException as e:
         if e.result.status_code == 403:
             if "Forbidden: bot was blocked by the user" in str(e):
@@ -53,7 +53,7 @@ def massmessage(conn, message, bot):
             # Send a message
             bot.send_message(chat_id, message)
             sent_messages.append(f"Sent to: {chat_id}")
-            time.sleep(0.5)
+            time.sleep(0.2)
         except telebot.apihelper.ApiTelegramException as e:
             if e.result.status_code == 403:
                 if "Forbidden: bot was blocked by the user" in str(e):
