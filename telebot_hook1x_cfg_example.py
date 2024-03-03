@@ -140,6 +140,8 @@ UNLOCK TABLES;
 
 # Credentials put here
 bot_token = "xxx:xxx"
+# define local port for webhook
+bot_lport = 1005
 # Database connection parameters
 db_host = "localhost"
 db_username = "xxx"
@@ -147,4 +149,7 @@ db_password = "xxx"
 db_name = "xxx"
 # MySQL socket path
 mysql_unix_socket = "/var/run/mysqld/mysqld.sock"
+#paths
+install_path = "/var/www"
+logfpath = "/var/log/telebot1x.log"
 
