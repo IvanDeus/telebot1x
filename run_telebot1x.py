@@ -2,7 +2,7 @@
 import subprocess
 import sys
 # Config import
-from telebot1x_cfg import *
+from telebot_hook1x_cfg import *
 # Help message
 if len(sys.argv) == 1:
     print("Usage: {} [start|stop|status]".format(sys.argv[0]))
