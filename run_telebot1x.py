@@ -25,7 +25,7 @@ if action == "start":
         print ("Singirella is already running.")
     else:
         subprocess.Popen(
-        ["gunicorn", "-b", "localhost:{}".format(bot_lport), "-w", "4", "-t", "222", "--log-file={}".format(logfpath), "singirella:app"]
+        ["gunicorn", "-b", "localhost:{}".format(bot_lport), "-w", "2", "-t", "222", "--log-file={}".format(logfpath), "telebot1x:app"]
         )
         print("Singirella started.")
 elif action == "stop":
