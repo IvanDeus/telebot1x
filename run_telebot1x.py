@@ -33,7 +33,7 @@ elif action == "stop":
     try:
         gunicorn_pid = subprocess.check_output(["pgrep", "-f", "gunicorn"]).splitlines()[0]
         subprocess.call(["kill", gunicorn_pid.decode()])
-        print("Singirella stopped.")
+        print("Bot stopped.")
     except subprocess.CalledProcessError:
         print("Bot is not running.")
 elif action == "status":
