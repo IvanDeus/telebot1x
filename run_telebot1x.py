@@ -43,7 +43,7 @@ elif action == "status":
         if filtered_processes:
             print('\n'.join(filtered_processes))
         else:
-            print ("Singirella is not running.")
+            print ("Bot is not running.")
     except subprocess.CalledProcessError:
         print("Error while checking Gunicorn status.")
 else:
