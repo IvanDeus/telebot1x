@@ -141,7 +141,7 @@ UNLOCK TABLES;
 # Credentials put here
 bot_token = "xxx:xxx"
 # define local port for webhook
-bot_lport = 1005
+bot_lport = 1500
 # Database connection parameters
 db_host = "localhost"
 db_username = "xxx"
