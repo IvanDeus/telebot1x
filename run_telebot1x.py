@@ -25,7 +25,7 @@ if action == "start":
         print ("Bot is already running.")
     else:
         subprocess.Popen(
-        ["gunicorn", "-b", "localhost:{}".format(bot_lport), "-w", "2", "-t", "222", "--log-file={}".format(logfpath), "telebot1x:app"]
+        ["gunicorn", "-b", "localhost:{}".format(bot_lport), "-w", "2", "-t", "222", "--log-file={}".format(logfpath), "telebot_hook1x:app"]
         )
         print("Bot started.")
 elif action == "stop":
