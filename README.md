@@ -1,4 +1,4 @@
-# telebot1x (python version) made by IvanDeus (2023)
+# telebot1x (python version) made by IvanDeus (2024)
 If your user care communication needs involve sending text, images, or PDF files via Telegram, this bot provides the perfect solution.
 
 This Python/MySQL-based Telegram bot is designed with simplicity in mind. It's responsive to a variety of user commands, adept at storing all chat data efficiently in a MySQL table, and offers a seamless experience.
