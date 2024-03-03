@@ -22,12 +22,12 @@ action = sys.argv[1]
 if action == "start":
     filtered_processes = filter_processes_by_port(bot_lport)
     if filtered_processes:
-        print ("Singirella is already running.")
+        print ("Bot is already running.")
     else:
         subprocess.Popen(
         ["gunicorn", "-b", "localhost:{}".format(bot_lport), "-w", "2", "-t", "222", "--log-file={}".format(logfpath), "telebot1x:app"]
         )
-        print("Singirella started.")
+        print("Bot started.")
 elif action == "stop":
     # Get the PID of the Gunicorn process and kill it
     try:
@@ -35,7 +35,7 @@ elif action == "stop":
         subprocess.call(["kill", gunicorn_pid.decode()])
         print("Singirella stopped.")
     except subprocess.CalledProcessError:
-        print("Singirella is not running.")
+        print("Bot is not running.")
 elif action == "status":
     # Show the status of Gunicorn processes
     try:
