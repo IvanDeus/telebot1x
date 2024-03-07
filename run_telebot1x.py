@@ -1,6 +1,9 @@
 #python3 script to start bot process
 import subprocess
 import sys
+# my path
+import os
+script_directory = os.path.dirname(os.path.abspath(__file__))
 # Config import
 from telebot_hook1x_cfg import *
 # Help message
@@ -25,7 +28,7 @@ if action == "start":
         print ("Bot is already running.")
     else:
         subprocess.Popen(
-        ["gunicorn", "-b", "localhost:{}".format(bot_lport), "-w", "2", "-t", "222", "--log-file={}".format(logfpath), "telebot_hook1x:app"]
+        ["gunicorn", "-b", "localhost:{}".format(bot_lport), "-w", "2", "-t", "222", "--log-file={}".format(logfpath), "telebot_hook1x:app", "--chdir", script_directory]
         )
         print("Bot started.")
 elif action == "stop":
